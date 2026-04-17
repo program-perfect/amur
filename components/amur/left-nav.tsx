@@ -162,20 +162,40 @@ export function LeftNav({ onOpenNotifications }: LeftNavProps) {
 
         <Link
           href="/me"
-          aria-label="Открыть мой профиль"
+          aria-label="Открыть мой профиль Татьяна"
           className={cn(
-            "cursor-pointer flex items-center transition-colors",
-            expanded ? "gap-3 rounded-full px-1 py-1 hover:bg-sidebar-accent/60" : "flex-col",
+            "group relative block overflow-hidden ring-1 ring-border/60 transition-all hover:ring-primary/40",
+            expanded
+              ? "aspect-[4/5] w-full rounded-2xl"
+              : "aspect-square w-11 shrink-0 rounded-xl",
           )}
         >
-          <div className="relative h-15 w-15 shrink-0 overflow-hidden rounded-full ring-3 ring-background">
-            <Image src="/profiles/tata-1.jpg" alt="Ваш профиль" fill className="object-cover" sizes="40px" />
-          </div>
-          {expanded && (
-            <div className="flex min-w-0 flex-col leading-tight">
-              <span className="truncate text-sm font-semibold text-foreground">Татьяна</span>
-              <span className="truncate text-xs text-muted-foreground">Мой профиль</span>
-            </div>
+          <Image
+            src="/profiles/tata-1.jpg"
+            alt="Ваш профиль"
+            fill
+            sizes={expanded ? "224px" : "44px"}
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+          />
+          {expanded ? (
+            <>
+              {/* Soft gradient that fades the photo into a warm shadow
+                  at the bottom, giving the name a legible backdrop. */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-foreground/85 via-foreground/40 to-transparent"
+              />
+              <div className="absolute inset-x-0 bottom-0 flex flex-col gap-0.5 px-3.5 pb-3 text-background">
+                <span className="font-serif text-3xl leading-tight tracking-tight">
+                  Татьяна
+                </span>
+                <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-background/75">
+                  Мой профиль
+                </span>
+              </div>
+            </>
+          ) : (
+            <span className="sr-only">Татьяна</span>
           )}
         </Link>
       </div>
