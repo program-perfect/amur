@@ -1,19 +1,19 @@
 "use client"
 
 import {
-	ArrowLeft,
-	BookIcon,
-	Briefcase,
-	Camera,
-	Eye,
-	FeatherIcon,
-	MapPin,
-	Pencil,
-	Settings,
-	Share2,
-	Sparkles,
-	Star,
-	StarIcon
+    ArrowLeft,
+    BookIcon,
+    Briefcase,
+    Camera,
+    Eye,
+    FeatherIcon,
+    MapPin,
+    Pencil,
+    Settings,
+    Share2,
+    Sparkles,
+    Star,
+    StarIcon
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
