@@ -1,8 +1,10 @@
 "use client"
 
 import type { Conversation } from "@/lib/amur-data"
+import { getChatId } from "@/lib/chat-ids"
 import { cn } from "@/lib/utils"
 import {
+  ArrowUpRight,
   BellOff,
   Flag,
   Images,
@@ -13,6 +15,7 @@ import {
   Sparkles,
 } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 import { useState } from "react"
 import { PhotoLightbox } from "./photo-lightbox"
 
@@ -122,13 +125,30 @@ function CollapsedIcon({
 }
 
 export function ExpandedView({ conversation }: { conversation: Conversation }) {
-  const { photos, name, age, city, distance, compatibility, about, facts, interests } =
+  const { name, age, city, distance, compatibility, about, facts, interests } =
     conversation
+
+  // Combine avatar + photos into a single deduplicated list so the
+  // lightbox can paginate through both when the avatar isn't already
+  // part of `photos`.
+  const allPhotos = (() => {
+    const merged = [conversation.avatar, ...conversation.photos].filter(
+      (p): p is string => typeof p === "string" && p.length > 0,
+    )
+    return Array.from(new Set(merged))
+  })()
 
   // `null` = closed; otherwise the index of the photo being inspected.
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const openLightbox = (i: number) => setLightboxIndex(i)
   const closeLightbox = () => setLightboxIndex(null)
+
+  // Resolve the URL-safe chat ID so the "open full profile" link
+  // points at the dedicated /m/[profileId] page for this character.
+  const profileHref = (() => {
+    const chatId = getChatId(conversation.id)
+    return chatId ? `/m/${chatId}` : null
+  })()
 
   return (
     <div className="flex flex-col not-only:flex-1 overflow-y-auto scrollbar-thin ">
@@ -140,7 +160,7 @@ export function ExpandedView({ conversation }: { conversation: Conversation }) {
         className="group relative aspect-[4/5] w-full cursor-zoom-in overflow-hidden text-left"
       >
         <Image
-          src={photos[0] || "/placeholder.svg"}
+          src={allPhotos[0] || "/placeholder.svg"}
           alt={name}
           fill
           className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02]"
@@ -151,7 +171,7 @@ export function ExpandedView({ conversation }: { conversation: Conversation }) {
 
         {/* Photo indicator */}
         <div className="pointer-events-none absolute left-4 right-4 top-4 flex gap-1 pl-10">
-          {photos.map((_, i) => (
+          {allPhotos.map((_, i) => (
             <div
               key={i}
               className="h-[3px] flex-1 overflow-hidden rounded-full bg-background/40"
@@ -229,11 +249,11 @@ export function ExpandedView({ conversation }: { conversation: Conversation }) {
           </div>
         </section>
 
-        {photos.length > 1 && (
+        {allPhotos.length > 1 && (
           <section>
             <SectionTitle>Ещё фото</SectionTitle>
             <div className="grid grid-cols-2 gap-2">
-              {photos.slice(1).map((src, i) => (
+              {allPhotos.slice(1).map((src, i) => (
                 <button
                   key={src}
                   type="button"
@@ -254,6 +274,19 @@ export function ExpandedView({ conversation }: { conversation: Conversation }) {
           </section>
         )}
 
+        {profileHref && (
+          <Link
+            href={profileHref}
+            className="flex items-center justify-between gap-3 rounded-2xl border border-primary/20 bg-primary/5 px-4 py-3 text-[13.5px] font-medium text-primary transition-colors hover:border-primary/40 hover:bg-primary/10"
+          >
+            <span className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4" strokeWidth={1.8} />
+              Открыть полный профиль
+            </span>
+            <ArrowUpRight className="h-4 w-4" strokeWidth={1.8} />
+          </Link>
+        )}
+
         <div className="mt-auto flex items-center justify-between border-t border-border pt-5 text-[12px] text-muted-foreground">
           <button className="cursor-pointer flex items-center gap-1.5 transition-colors hover:text-foreground">
             <BellOff className="h-3.5 w-3.5" strokeWidth={1.6} />
@@ -267,7 +300,7 @@ export function ExpandedView({ conversation }: { conversation: Conversation }) {
       </div>
 
       <PhotoLightbox
-        photos={photos}
+        photos={allPhotos}
         index={lightboxIndex}
         alt={name}
         onClose={closeLightbox}

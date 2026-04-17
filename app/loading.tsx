@@ -18,7 +18,18 @@ export default function Loading() {
       role="status"
       aria-live="polite"
       aria-label="Загрузка страницы"
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-[#fdf7f4]/70 backdrop-blur-sm animate-loading-fade-in"
+      /*
+        Note: `fixed inset-0` breaks here because `template.tsx` wraps
+        every route in a `.animate-route-in` element whose keyframes
+        apply a `transform`. A transformed ancestor creates a new
+        containing block for any fixed descendants — so `inset-0`
+        would resolve against the template's natural (short) height
+        instead of the viewport, visually pinning the indicator to
+        the top. Using `min-h-dvh w-full` keeps the loader in normal
+        flow and guarantees it stretches to the full viewport, so
+        `items-center justify-center` can actually centre it.
+      */
+      className="relative z-[60] flex min-h-dvh w-full items-center justify-center bg-[#fdf7f4]/70 backdrop-blur-sm animate-loading-fade-in"
     >
       <div className="flex flex-col items-center gap-5">
         {/* Three-dot pulse (breathing heartbeat) */}

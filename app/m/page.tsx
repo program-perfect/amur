@@ -218,6 +218,39 @@ function MessengerPage() {
   // Tablet/mobile profile sheet (below xl).
   const [profileOpen, setProfileOpen] = useState(false)
 
+  /* ── Per-chat hint visibility ──────────────────────────────────────────
+     Users can dismiss the "Подсказка Амура" row inside each chat and
+     re-summon it on demand. Preference is stored per conversation ID
+     (not per chat-route ID) and persisted across sessions via
+     localStorage so it survives reloads and cross-tab navigation. */
+  const HINT_STORAGE_KEY = "amur:hint-hidden:v1"
+  const [hintHiddenMap, setHintHiddenMap] = useState<Record<string, boolean>>({})
+  // Hydrate the map from localStorage after mount — guarded so SSR and
+  // the first client render stay identical.
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(HINT_STORAGE_KEY)
+      if (!raw) return
+      const parsed = JSON.parse(raw)
+      if (parsed && typeof parsed === "object") {
+        setHintHiddenMap(parsed as Record<string, boolean>)
+      }
+    } catch {
+      // Corrupt/blocked storage — fall back to defaults (all visible).
+    }
+  }, [])
+  const toggleActiveHint = useCallback(() => {
+    setHintHiddenMap((prev) => {
+      const next = { ...prev, [activeIdRef.current]: !prev[activeIdRef.current] }
+      try {
+        window.localStorage.setItem(HINT_STORAGE_KEY, JSON.stringify(next))
+      } catch {
+        // Storage blocked — still keep the in-memory toggle working.
+      }
+      return next
+    })
+  }, [])
+
   // Desktop (md+) resizable list width. Below COMPACT_BELOW, the list
   // switches to an icon-only view (avatars + unread-count badges).
   const LIST_MIN = 72
@@ -585,6 +618,32 @@ function MessengerPage() {
     [activeId, state],
   )
 
+  /* ── Searchable-text map for the chat list search box ──────────────────
+     For each conversation we flatten the character's name + dative
+     declension + preview line + every sent/received message into one
+     string. `fuzzy-search` then scores the query against this haystack
+     so users can find chats by who's speaking or by what was said —
+     including partial words and small typos. The map is keyed by
+     conversation ID. */
+  const searchableText = useMemo(() => {
+    const out: Record<string, string> = {}
+    for (const conv of seed) {
+      const s = state[conv.id]
+      const messages = s?.messages ?? []
+      const flattened = messages
+        .map((m) => {
+          if (m.kind === "text") return m.text
+          if (m.kind === "image") return m.caption ?? ""
+          if (m.kind === "system") return m.text
+          return ""
+        })
+        .join(" ")
+      out[conv.id] =
+        `${conv.name} ${conv.nameDative} ${conv.status} ${s?.preview.lastMessage ?? ""} ${flattened}`
+    }
+    return out
+  }, [state])
+
   const previews = useMemo(() => {
     const byId: Record<
       string,
@@ -637,6 +696,7 @@ function MessengerPage() {
             activeId={activeId}
             onSelect={handleSelect}
             previews={previews}
+            searchableText={searchableText}
             width={listWidth}
             compact={listCompact}
             animate={!isResizing}
@@ -672,6 +732,9 @@ function MessengerPage() {
             isTyping={activeState.isTyping}
             scenarioDone={scenarioDone}
             hint={nextHint}
+            hintHidden={!!hintHiddenMap[activeConv.id]}
+            onToggleHint={toggleActiveHint}
+            profileHref={getChatId(activeConv.id) ? `/m/${getChatId(activeConv.id)}` : null}
             onSend={handleSend}
             onBack={() => setMobileView("list")}
             onOpenProfile={() => setProfileOpen(true)}

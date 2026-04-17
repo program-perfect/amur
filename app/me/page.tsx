@@ -1,5 +1,7 @@
 "use client"
 
+import { PhotoLightbox } from "@/components/amur/photo-lightbox"
+import { SiteFooter } from "@/components/amur/site-footer"
 import {
     ArrowLeft,
     BookIcon,
@@ -7,6 +9,7 @@ import {
     Camera,
     Eye,
     FeatherIcon,
+    ImageIcon,
     MapPin,
     Pencil,
     Settings,
@@ -17,6 +20,7 @@ import {
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { useState } from "react"
 
 const photos = [
   "/profiles/tata-1.jpg",
@@ -48,6 +52,11 @@ const stats = [
 ]
 
 export default function ProfilePage() {
+  // `null` = lightbox closed; otherwise the index of the photo being
+  // inspected. Kept simple (no URL param) because this profile's
+  // photos are a fixed static set.
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       {/* Top bar */}
@@ -93,14 +102,19 @@ export default function ProfilePage() {
         <div className="grid gap-6 xs:gap-8 md:grid-cols-[320px_1fr] lg:grid-cols-[400px_1fr]">
           {/* Left: Hero photo card */}
           <div className="md:sticky md:top-24 md:self-start">
-            <div className="relative aspect-4/5 w-full overflow-hidden rounded-3xl shadow-[0_1px_2px_rgba(120,50,20,0.04),0_20px_50px_-18px_rgba(120,50,20,0.25)] ring-1 ring-border">
+            <button
+              type="button"
+              onClick={() => setLightboxIndex(0)}
+              aria-label="Открыть фото"
+              className="group relative aspect-4/5 w-full cursor-zoom-in overflow-hidden rounded-3xl text-left shadow-[0_1px_2px_rgba(120,50,20,0.04),0_20px_50px_-18px_rgba(120,50,20,0.25)] ring-1 ring-border"
+            >
               <Image
                 src={photos[0] || "/placeholder.svg"}
                 alt="Аватар"
                 fill
                 sizes="(max-width: 768px) 100vw, 400px"
                 priority
-                className="object-cover"
+                className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02]"
               />
               <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-foreground/75 via-foreground/10 to-transparent" />
 
@@ -121,7 +135,7 @@ export default function ProfilePage() {
                   <span>г. Артемьевск</span>
                 </div>
               </div>
-            </div>
+            </button>
 
             {/* Stats */}
             <div className="mt-4 grid grid-cols-3 gap-2 rounded-2xl bg-card p-2 ring-1 ring-border">
@@ -221,9 +235,22 @@ export default function ProfilePage() {
               </div>
             </section>
 
+            {/*
+              Фотографии — полноценный альбомный блок со всеми
+              снимками профиля (а не только с «дополнительными»).
+              Каждая плитка открывает полноэкранный просмотр через
+              общий PhotoLightbox, так что можно листать все
+              карточки подряд, включая ту, что вынесена в hero.
+            */}
             <section>
               <div className="mb-3 flex items-end justify-between">
-                <SectionTitle className="mb-0">Галерея</SectionTitle>
+                <div className="flex items-center gap-2">
+                  <SectionTitle className="mb-0">Фотографии</SectionTitle>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[10.5px] font-medium text-muted-foreground">
+                    <ImageIcon className="h-3 w-3" strokeWidth={1.8} />
+                    {photos.length}
+                  </span>
+                </div>
                 <button
                   type="button"
                   className="inline-flex cursor-pointer items-center gap-1 text-[12px] font-medium text-primary transition-colors hover:text-primary/80"
@@ -233,19 +260,27 @@ export default function ProfilePage() {
                 </button>
               </div>
               <div className="grid grid-cols-2 gap-2 xs:gap-2.5 xs:grid-cols-3 md:grid-cols-2 lg:grid-cols-3">
-                {photos.slice(1).map((src, i) => (
-                  <div
+                {photos.map((src, i) => (
+                  <button
                     key={src}
-                    className="group relative aspect-3/4 overflow-hidden rounded-2xl ring-1 ring-border"
+                    type="button"
+                    onClick={() => setLightboxIndex(i)}
+                    aria-label={`Открыть фото ${i + 1}`}
+                    className="group relative aspect-3/4 cursor-zoom-in overflow-hidden rounded-2xl ring-1 ring-border transition-all hover:ring-primary/40"
                   >
                     <Image
                       src={src || "/placeholder.svg"}
-                      alt={`Фото ${i + 2}`}
+                      alt={`Фото ${i + 1}`}
                       fill
                       sizes="(min-width: 640px) 200px, 50vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                  </div>
+                    {i === 0 && (
+                      <span className="absolute left-2 top-2 rounded-full bg-background/85 px-2 py-0.5 text-[10px] font-medium text-foreground/80 backdrop-blur-sm">
+                        Главное
+                      </span>
+                    )}
+                  </button>
                 ))}
                 <button
                   type="button"
@@ -278,6 +313,16 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      <SiteFooter />
+
+      <PhotoLightbox
+        photos={photos}
+        index={lightboxIndex}
+        alt="Татьяна"
+        onClose={() => setLightboxIndex(null)}
+        onIndexChange={setLightboxIndex}
+      />
     </main>
   )
 }

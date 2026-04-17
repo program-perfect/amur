@@ -15,8 +15,10 @@ import {
   Smile,
   Sparkles,
   Video,
+  X,
 } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
 
 const MAX_COMPOSER_HEIGHT = 180
@@ -29,6 +31,9 @@ export function ChatView({
   isTyping,
   scenarioDone,
   hint,
+  hintHidden = false,
+  onToggleHint,
+  profileHref,
   onSend,
   onBack,
   onOpenProfile,
@@ -45,6 +50,16 @@ export function ChatView({
   /** Upcoming scripted "me" line. Null when it's the other side's turn or
    *  when the scenario is over. */
   hint: string | null
+  /** When true, the Амур suggestion row is hidden by the user. A compact
+   *  "show hint" pill takes its place so it can be re-summoned. */
+  hintHidden?: boolean
+  /** Toggle the hint's visibility for the active chat. Optional so the
+   *  component remains usable in isolation (e.g. fixture pages). */
+  onToggleHint?: () => void
+  /** Absolute href for the dedicated full-profile page. Null/undefined
+   *  when no stable route exists yet — the header then falls back to
+   *  the profile sheet. */
+  profileHref?: string | null
   onSend: (text: string) => boolean
   onBack?: () => void
   onOpenProfile?: () => void
@@ -131,11 +146,20 @@ export function ChatView({
               <ChevronLeft className="h-5 w-5" strokeWidth={1.8} />
             </button>
           )}
-          <button
-            type="button"
-            onClick={onOpenProfile}
-            className="cursor-pointer flex min-w-0 items-center gap-2 text-left md:gap-3 xl:pointer-events-none"
-            aria-label={`Профиль ${conversation.name}`}
+          {/*
+            The entire left-side of the header (avatar + name + status)
+            acts as the jump into the character's full profile page.
+            We use a real <Link> so right-click → open in new tab works
+            and the route is pre-fetched on hover. The info button on
+            the right still exists on <xl screens for a quick at-a-glance
+            sheet without leaving the messenger. If we have no stable
+            profile route for this character yet, we silently fall back
+            to the sheet-opening button (no dead links).
+          */}
+          <HeaderIdentity
+            href={profileHref}
+            name={conversation.name}
+            onFallbackClick={onOpenProfile}
           >
             <div className="relative shrink-0">
               <div className="relative h-10 w-10 overflow-hidden rounded-full md:h-11 md:w-11">
@@ -173,7 +197,7 @@ export function ChatView({
                 {statusLabel}
               </p>
             </div>
-          </button>
+          </HeaderIdentity>
         </div>
 
         <div className="flex shrink-0 items-center gap-0.5 md:gap-1">
@@ -370,40 +394,82 @@ export function ChatView({
 
           {/* Composer hint row — the keyboard hint on the right is always
               visible; the Амур suggestion on the left fades in/out on its
-              own depending on whose turn it is, and collapses away once
-              the scenario is finished. */}
-          <div className="mt-3 flex items-center justify-between gap-3 px-1">
-            {/* Left: Амур suggestion. Independent visibility — collapses
-                horizontally without affecting the right-side keyboard hint. */}
-            <div
-              aria-hidden={scenarioDone || !hintVisible}
-              className={cn(
-                "grid min-w-0 flex-1 transition-[grid-template-columns,opacity] duration-300 ease-out",
-                scenarioDone || !hintVisible
-                  ? "grid-cols-[0fr] opacity-0"
-                  : "grid-cols-[1fr] opacity-100",
-              )}
-            >
-              <div className="flex min-w-0 items-center gap-2 overflow-hidden text-[11px] text-muted-foreground">
-                <Sparkles
-                  className="h-3 w-3 shrink-0 text-accent"
-                  strokeWidth={1.8}
-                />
-                <span className="cursor-text hidden shrink-0 sm:inline">
-                  Подсказка Амура:
-                </span>
-                <span className="cursor-text shrink-0 sm:hidden">Амур:</span>
+              own depending on whose turn it is, collapses away once the
+              scenario is finished, and can also be explicitly dismissed
+              by the user via the X button (restorable via the small
+              "показать" pill that takes its place). */}
+          <div className="mt-3 flex min-h-6 items-center justify-between gap-3 px-1">
+            {/* Left — either the full suggestion row OR the restore pill,
+                depending on the user's dismiss state. Wrapped in a
+                relative/absolute pair so the swap doesn't change the
+                composer height. */}
+            <div className="relative min-w-0 flex-1">
+              {/* Full suggestion — fades out when scenario is over,
+                  there is no hint yet, or the user has hidden it. */}
+              <div
+                aria-hidden={scenarioDone || !hintVisible || hintHidden}
+                className={cn(
+                  "grid min-w-0 transition-[grid-template-columns,opacity] duration-300 ease-out",
+                  scenarioDone || !hintVisible || hintHidden
+                    ? "grid-cols-[0fr] opacity-0"
+                    : "grid-cols-[1fr] opacity-100",
+                )}
+              >
+                <div className="flex min-w-0 items-center gap-2 overflow-hidden text-[11px] text-muted-foreground">
+                  <Sparkles
+                    className="h-3 w-3 shrink-0 text-accent"
+                    strokeWidth={1.8}
+                  />
+                  <span className="cursor-text hidden shrink-0 sm:inline">
+                    Подсказка Амура:
+                  </span>
+                  <span className="cursor-text shrink-0 sm:hidden">Амур:</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (displayHint) setValue(displayHint)
+                    }}
+                    disabled={!hintVisible || hintHidden}
+                    className="cursor-pointer truncate text-foreground underline underline-offset-4 transition-colors hover:text-primary disabled:cursor-default"
+                  >
+                    «{displayHint ?? ""}»
+                  </button>
+                  {/* Dismiss button — only relevant while a hint is
+                      actually visible. */}
+                  {onToggleHint && !scenarioDone && hintVisible && (
+                    <button
+                      type="button"
+                      onClick={onToggleHint}
+                      aria-label="Скрыть подсказку Амура"
+                      className="cursor-pointer -mr-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    >
+                      <X className="h-3 w-3" strokeWidth={2} />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Restore pill — only shown when the user has dismissed
+                  the hint AND the scenario would otherwise be showing
+                  one. Positioned absolutely to preserve composer height
+                  during the cross-fade. */}
+              {onToggleHint && !scenarioDone && hintHidden && (
                 <button
                   type="button"
-                  onClick={() => {
-                    if (displayHint) setValue(displayHint)
-                  }}
-                  disabled={!hintVisible}
-                  className="cursor-pointer truncate text-foreground underline underline-offset-4 transition-colors hover:text-primary disabled:cursor-default"
+                  onClick={onToggleHint}
+                  aria-label="Показать подсказку Амура"
+                  className={cn(
+                    "cursor-pointer absolute inset-y-0 left-0 flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+                    "animate-soft-in",
+                  )}
                 >
-                  «{displayHint ?? ""}»
+                  <Sparkles
+                    className="h-3 w-3 shrink-0 text-accent"
+                    strokeWidth={1.8}
+                  />
+                  <span>Показать подсказку Амура</span>
                 </button>
-              </div>
+              )}
             </div>
 
             {/* Right: keyboard hint — always visible on large screens,
@@ -415,6 +481,52 @@ export function ChatView({
         </div>
       </div>
     </section>
+  )
+}
+
+/**
+ * Shared wrapper for the chat header's avatar+name+status block.
+ *
+ * When a stable profile URL exists we render a <Link>; otherwise a
+ * <button> that falls back to opening the side profile sheet. Keeping
+ * the inner JSX in one place means the avatar/indicator/copy never
+ * duplicate — and future design changes stay in sync across both
+ * modes.
+ */
+function HeaderIdentity({
+  href,
+  name,
+  onFallbackClick,
+  children,
+}: {
+  href?: string | null
+  name: string
+  onFallbackClick?: () => void
+  children: React.ReactNode
+}) {
+  const sharedClass =
+    "cursor-pointer flex min-w-0 items-center gap-2 text-left md:gap-3 rounded-full transition-opacity hover:opacity-80"
+  if (href) {
+    return (
+      <Link
+        href={href}
+        prefetch
+        className={sharedClass}
+        aria-label={`Открыть полный профиль ${name}`}
+      >
+        {children}
+      </Link>
+    )
+  }
+  return (
+    <button
+      type="button"
+      onClick={onFallbackClick}
+      className={sharedClass}
+      aria-label={`Профиль ${name}`}
+    >
+      {children}
+    </button>
   )
 }
 

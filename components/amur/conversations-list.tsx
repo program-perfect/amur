@@ -1,9 +1,11 @@
 "use client"
 
 import { conversations, newMatches } from "@/lib/amur-data"
+import { matchesQuery } from "@/lib/fuzzy-search"
 import { cn } from "@/lib/utils"
-import { Check, CheckCheck, Search, Sparkles } from "lucide-react"
+import { Check, CheckCheck, Search, Sparkles, X } from "lucide-react"
 import Image from "next/image"
+import { useDeferredValue, useMemo, useState } from "react"
 
 type PreviewMap = Record<
   string,
@@ -23,6 +25,7 @@ export function ConversationsList({
   activeId,
   onSelect,
   previews,
+  searchableText,
   compact = false,
   width,
   animate = true,
@@ -31,6 +34,10 @@ export function ConversationsList({
   activeId: string
   onSelect: (id: string) => void
   previews: PreviewMap
+  /** Per-conversation haystack used by the search box. Keyed by the
+   *  conversation's stable `id`, not the URL-facing chat ID. When
+   *  omitted, search falls back to name + preview only. */
+  searchableText?: Record<string, string>
   /**
    * When true, render an icon-only sidebar showing just avatars with their
    * unread-count badges. Names and previews are hidden to save room.
@@ -65,6 +72,7 @@ export function ConversationsList({
           activeId={activeId}
           onSelect={onSelect}
           previews={previews}
+          searchableText={searchableText}
         />
       )}
     </div>
@@ -150,11 +158,35 @@ function ExpandedView({
   activeId,
   onSelect,
   previews,
+  searchableText,
 }: {
   activeId: string
   onSelect: (id: string) => void
   previews: PreviewMap
+  searchableText?: Record<string, string>
 }) {
+  // Controlled search input. `useDeferredValue` keeps typing responsive
+  // even when the filter pass turns expensive (long message histories)
+  // — React can render the stale list while the new one is being
+  // computed on a background priority.
+  const [query, setQuery] = useState("")
+  const deferredQuery = useDeferredValue(query)
+  const trimmed = deferredQuery.trim()
+  const isSearching = trimmed.length > 0
+
+  const filtered = useMemo(() => {
+    if (!isSearching) return conversations
+    return conversations.filter((c) => {
+      // Fall back to name + current preview line when the parent
+      // didn't pre-compute a message haystack — still covers common
+      // lookups even in "isolation" mode.
+      const haystack =
+        searchableText?.[c.id] ??
+        `${c.name} ${c.nameDative} ${c.status} ${c.preview.lastMessage ?? ""}`
+      return matchesQuery(trimmed, haystack)
+    })
+  }, [isSearching, trimmed, searchableText])
+
   return (
     <>
       {/* Header */}
@@ -164,7 +196,7 @@ function ExpandedView({
             Сообщения
           </h1>
           <span className="text-xs font-semibold tabular-nums text-muted-foreground mr-1">
-            {conversations.length}
+            {isSearching ? `${filtered.length}/${conversations.length}` : conversations.length}
           </span>
         </div>
 
@@ -173,14 +205,33 @@ function ExpandedView({
           <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
             placeholder="Поиск по именам и сообщениям"
-            className="cursor-text h-10 w-full rounded-full border border-border bg-background/60 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/10"
+            aria-label="Поиск по чатам"
+            className={cn(
+              "cursor-text h-10 w-full rounded-full border border-border bg-background/60 pl-10 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/10",
+              // Extra right padding when the clear button is present so
+              // the text cursor never slides under it.
+              query ? "pr-10" : "pr-4",
+            )}
           />
+          {query && (
+            <button
+              type="button"
+              onClick={() => setQuery("")}
+              aria-label="Очистить поиск"
+              className="cursor-pointer absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <X className="h-3.5 w-3.5" strokeWidth={2} />
+            </button>
+          )}
         </div>
       </div>
 
-      {/* New matches carousel */}
-      <div className="px-4 pb-3 md:px-6">
+      {/* New matches carousel — hidden during an active search so the
+          filtered list gets the full visual focus. */}
+      <div className={cn("px-4 pb-3 md:px-6", isSearching && "hidden")}>
         <div className="flex items-center justify-between">
           <div className="cursor-text flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
             <Sparkles className="h-3 w-3 text-accent" strokeWidth={1.8} />
@@ -221,15 +272,36 @@ function ExpandedView({
         </div>
       </div>
 
-      <div className="mx-4 h-px bg-border md:mx-6" />
+      <div className={cn("mx-4 h-px bg-border md:mx-6", isSearching && "hidden")} />
 
       {/* Conversation list */}
       <div className="flex-1 overflow-y-auto px-3 pb-24 pt-3 scrollbar-thin xl:pb-3">
         <div className="cursor-text px-3 pb-2 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
-          Диалоги
+          {isSearching
+            ? filtered.length > 0
+              ? `Найдено · ${filtered.length}`
+              : "Ничего не найдено"
+            : "Диалоги"}
         </div>
+        {isSearching && filtered.length === 0 && (
+          <div className="flex flex-col items-center gap-2 px-6 py-10 text-center">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-muted">
+              <Search className="h-5 w-5 text-muted-foreground" strokeWidth={1.6} />
+            </div>
+            <p className="text-[13px] text-muted-foreground">
+              По запросу «{trimmed}» ничего не нашлось.
+            </p>
+            <button
+              type="button"
+              onClick={() => setQuery("")}
+              className="cursor-pointer text-[12px] text-primary underline underline-offset-4 transition-opacity hover:opacity-80"
+            >
+              Сбросить поиск
+            </button>
+          </div>
+        )}
         <ul className="flex flex-col gap-1">
-          {conversations.map((c) => {
+          {filtered.map((c) => {
             const preview = previews[c.id] ?? c.preview
             const active = c.id === activeId
             return (
