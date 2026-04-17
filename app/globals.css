@@ -162,6 +162,34 @@
   img {
     -webkit-user-drag: none;
   }
+  /* Touch-screen polish applied to every interactive element across
+     all routes so taps feel instant (no 300ms click delay) and don't
+     show the default blue iOS/Android tap highlight rectangle. */
+  button,
+  a,
+  [role="button"],
+  [role="menuitem"],
+  [role="tab"],
+  [role="link"],
+  input[type="button"],
+  input[type="submit"],
+  label[for],
+  summary {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* A gentle press-down feedback for touch devices — hover styles do
+     nothing on phones, so the scale softening fills in as tactile
+     confirmation that the tap registered. */
+  @media (hover: none) {
+    button:active,
+    a:active,
+    [role="button"]:active,
+    [role="menuitem"]:active,
+    [role="tab"]:active {
+      transition-duration: 80ms;
+    }
+  }
 }
 
 /* Smooth scroll for the whole document and nested scroll containers. */
@@ -250,6 +278,135 @@ html {
   }
   .animate-scale-out {
     animation: amur-scale-out 200ms cubic-bezier(0.4, 0, 1, 1) both;
+  }
+}
+
+/* ── Feed reaction picker animations ───────────────────────────────────
+   The picker slides up from the reaction button and fades in with a
+   subtle scale. Each reaction glyph gets its own personality: thumbs
+   up nods, fire flickers, laugh bounces sideways, wow pulses, sad
+   droops, and angry shakes. These play on-hover inside the picker
+   and on-pick (via the `-pop` variants) to celebrate the chosen
+   reaction on the committed badge. */
+@keyframes feed-picker-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes feed-picker-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(6px) scale(0.92);
+  }
+}
+@keyframes feed-reaction-like {
+  0% { transform: translateY(0) rotate(0); }
+  30% { transform: translateY(-6px) rotate(-10deg); }
+  60% { transform: translateY(-2px) rotate(6deg); }
+  100% { transform: translateY(0) rotate(0); }
+}
+@keyframes feed-reaction-fire {
+  0% { transform: scale(1); filter: brightness(1); }
+  25% { transform: scale(1.18) translateY(-2px); filter: brightness(1.15); }
+  50% { transform: scale(1.05) translateY(-4px) rotate(-4deg); }
+  75% { transform: scale(1.22) translateY(-2px) rotate(3deg); filter: brightness(1.2); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+@keyframes feed-reaction-haha {
+  0% { transform: translateX(0) rotate(0); }
+  20% { transform: translateX(-3px) rotate(-8deg); }
+  40% { transform: translateX(3px) rotate(8deg); }
+  60% { transform: translateX(-2px) rotate(-5deg); }
+  80% { transform: translateX(2px) rotate(5deg); }
+  100% { transform: translateX(0) rotate(0); }
+}
+@keyframes feed-reaction-wow {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+  70% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+@keyframes feed-reaction-sad {
+  0% { transform: translateY(0) rotate(0); }
+  30% { transform: translateY(2px) rotate(-6deg); }
+  60% { transform: translateY(3px) rotate(4deg); }
+  100% { transform: translateY(0) rotate(0); }
+}
+@keyframes feed-reaction-angry {
+  0% { transform: translateX(0) scale(1); }
+  15% { transform: translateX(-2px) scale(1.08); }
+  30% { transform: translateX(2px) scale(1.08); }
+  45% { transform: translateX(-2px) scale(1.08); }
+  60% { transform: translateX(2px) scale(1.08); }
+  75% { transform: translateX(-1px) scale(1.04); }
+  100% { transform: translateX(0) scale(1); }
+}
+@keyframes feed-reaction-pop {
+  0% { transform: scale(0.4); opacity: 0; }
+  60% { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes feed-skeleton-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@layer utilities {
+  .animate-picker-in {
+    animation: feed-picker-in 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .animate-picker-out {
+    animation: feed-picker-out 160ms cubic-bezier(0.4, 0, 1, 1) both;
+  }
+  .reaction-like:hover {
+    animation: feed-reaction-like 600ms ease-in-out;
+  }
+  .reaction-fire:hover {
+    animation: feed-reaction-fire 700ms ease-in-out;
+  }
+  .reaction-haha:hover {
+    animation: feed-reaction-haha 600ms ease-in-out;
+  }
+  .reaction-wow:hover {
+    animation: feed-reaction-wow 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .reaction-sad:hover {
+    animation: feed-reaction-sad 700ms ease-in-out;
+  }
+  .reaction-angry:hover {
+    animation: feed-reaction-angry 500ms ease-in-out;
+  }
+  .animate-reaction-pop {
+    animation: feed-reaction-pop 420ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  /* Animated shimmer for skeleton placeholders — used while a feed
+     post's image hasn't finished loading. */
+  .feed-skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--feed-muted) 0%,
+      var(--feed-muted-strong) 50%,
+      var(--feed-muted) 100%
+    );
+    background-size: 200% 100%;
+    animation: feed-skeleton-shimmer 1.6s linear infinite;
+  }
+
+  /* Ensure touch targets feel natural on mobile: remove the blue tap
+     highlight and suppress pointer-events on fully disabled elements. */
+  .touch-manipulate {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 }
 

@@ -265,59 +265,37 @@ function makePost(i: number): FeedPostData {
 }
 
 /**
- * Produce `count` mixed feed items: posts interleaved with occasional
- * sponsored cards. Deterministic — no randomness, safe for SSR
- * hydration.
+ * Produce `count` mixed feed items: posts interleaved with exactly two
+ * sponsored cards — one of each kind. Deterministic — no randomness,
+ * safe for SSR hydration.
  *
- * Promo cadence is deliberately front-loaded and concentrated in the
- * beginning and middle of the feed, mirroring how real editorial feeds
- * work: ads are more aggressive up top (when attention is highest),
- * appear more frequently in the middle, and thin out as readers scroll
- * deeper.
+ * The feed contains only two ads total to keep sponsored content from
+ * feeling intrusive:
+ *   - АртЛента+ self-promo appears near the start of the feed
+ *   - Амур cross-promo appears around the middle of the feed
  *
- * For the first 36 slots the planted positions are:
- *   АртЛента+ :  slot 1, 5, 10, 16, 22
- *   Амур      :  slot 3, 8, 13, 19, 28
- *
- * That yields ~10 promos across 36 items, with 6 of them in the first 14
- * slots (dense start), 3 in the middle (slots 16-22), and 1 deeper.
- * For larger counts the pattern repeats every 36 slots so the density
- * pattern is preserved however far the reader scrolls.
+ * Ads are kept at least 4 posts apart from each other so readers get
+ * several pieces of editorial content between the two placements.
  */
-const ARTLENTA_PROMO_OFFSETS = [1, 5, 10, 16, 22] as const
-const AMUR_PROMO_OFFSETS = [3, 8, 13, 19, 28] as const
-const PROMO_CYCLE = 36
+const ARTLENTA_PROMO_SLOT = 3
+const AMUR_PROMO_SLOT = 15
 
 export function generateFeedItems(count: number): FeedItem[] {
-  const artlentaSlots = new Set<number>()
-  const amurSlots = new Set<number>()
-  for (let cycle = 0; cycle * PROMO_CYCLE < count; cycle++) {
-    const base = cycle * PROMO_CYCLE
-    ARTLENTA_PROMO_OFFSETS.forEach((o) => artlentaSlots.add(base + o))
-    AMUR_PROMO_OFFSETS.forEach((o) => amurSlots.add(base + o))
-  }
-
   const out: FeedItem[] = []
   let postIdx = 0
-  let lastKind: "post" | "promo" = "post"
 
   for (let slot = 0; slot < count; slot++) {
-    const isArtlentaPromo = artlentaSlots.has(slot)
-    const isAmurPromo = !isArtlentaPromo && amurSlots.has(slot)
-
-    if ((isArtlentaPromo || isAmurPromo) && lastKind !== "promo") {
-      if (isArtlentaPromo) {
-        out.push({ kind: "promo-artlenta", id: `promo-al-${slot}` })
-      } else {
-        out.push({ kind: "promo-amur", id: `promo-amur-${slot}` })
-      }
-      lastKind = "promo"
+    if (slot === ARTLENTA_PROMO_SLOT) {
+      out.push({ kind: "promo-artlenta", id: `promo-al-${slot}` })
+      continue
+    }
+    if (slot === AMUR_PROMO_SLOT) {
+      out.push({ kind: "promo-amur", id: `promo-amur-${slot}` })
       continue
     }
 
     out.push({ kind: "post", data: makePost(postIdx) })
     postIdx++
-    lastKind = "post"
   }
 
   return out
