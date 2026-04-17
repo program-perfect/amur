@@ -282,4 +282,29 @@ html {
   .scrollbar-none::-webkit-scrollbar {
     display: none;
   }
+
+  /* АртЛента side-panel scrollbar — always visible, thin, neutral grey.
+     Uses fixed rgba colours instead of the global `--border` token so it
+     stays legible on the feed's near-white paper background, and shows
+     a track so the thumb isn't hovering over transparent bleed. */
+  .scrollbar-feed {
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(90, 95, 110, 0.5) rgba(90, 95, 110, 0.08);
+  }
+  .scrollbar-feed::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-feed::-webkit-scrollbar-track {
+    background: rgba(90, 95, 110, 0.08);
+    border-radius: 999px;
+  }
+  .scrollbar-feed::-webkit-scrollbar-thumb {
+    background: rgba(90, 95, 110, 0.45);
+    border-radius: 999px;
+  }
+  .scrollbar-feed::-webkit-scrollbar-thumb:hover {
+    background: rgba(60, 65, 80, 0.65);
+  }
 }

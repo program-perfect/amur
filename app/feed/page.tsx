@@ -1,5 +1,6 @@
 "use client"
 
+import { FeedBottomDock } from "@/components/feed/feed-bottom-dock"
 import { FeedComposer } from "@/components/feed/feed-composer"
 import { FeedHeader } from "@/components/feed/feed-header"
 import { FeedPost } from "@/components/feed/feed-post"
@@ -82,10 +83,15 @@ export default function FeedPage() {
           xl+           : left + center + right with full widgets
       */}
       <div
-        className="mx-auto flex w-full max-w-[1300px] gap-0 pb-24 sm:gap-5 sm:px-4 md:gap-6 lg:px-6 xl:gap-8"
+        className="mx-auto flex w-full max-w-[1300px] gap-0 pb-28 sm:gap-5 sm:px-4 sm:pb-32 md:gap-6 md:pb-10 lg:px-6 xl:gap-8"
       >
-        {/* Left rail — only from lg up. */}
-        <aside className="sticky top-[104px] hidden h-[calc(100dvh-120px)] w-[230px] shrink-0 self-start overflow-y-auto pr-1 lg:block xl:w-[250px] scrollbar-thin">
+        {/*
+          Left rail — only from lg up. The sticky top offset sits just
+          below the header (title row + chip strip) plus 12px of breathing
+          room so panels don't clip against the header's bottom edge when
+          scrolling.
+        */}
+        <aside className="sticky top-[132px] hidden h-[calc(100dvh-148px)] w-[230px] shrink-0 self-start overflow-y-auto pr-1 lg:block xl:w-[250px] scrollbar-feed">
           <FeedSideLeft />
         </aside>
 
@@ -122,11 +128,22 @@ export default function FeedPage() {
           )}
         </main>
 
-        {/* Right rail — shown from md up. */}
-        <aside className="sticky top-[104px] hidden h-[calc(100dvh-120px)] w-[260px] shrink-0 self-start overflow-y-auto pl-1 md:block lg:w-[280px] xl:w-[320px] scrollbar-thin">
+        {/* Right rail — shown from md up. Uses the always-visible thin
+            grey scrollbar so the widgets don't slide under a transparent
+            track when overflowing. */}
+        <aside className="sticky top-[124px] hidden h-[calc(100dvh-140px)] w-[260px] shrink-0 self-start overflow-y-auto pl-1 md:block md:top-[118px] lg:top-[132px] lg:h-[calc(100dvh-148px)] lg:w-[280px] xl:w-[320px] scrollbar-feed">
           <FeedSideRight />
         </aside>
       </div>
+
+      {/* Floating category dock — mobile + small-tablet only. Lives at
+          the page root so it's not affected by the scroll container's
+          sticky context and always stays pinned to the viewport bottom. */}
+      <FeedBottomDock
+        categories={categories}
+        active={active}
+        onSelect={(id) => setActive(id)}
+      />
     </div>
   )
 }

@@ -269,21 +269,40 @@ function makePost(i: number): FeedPostData {
  * sponsored cards. Deterministic — no randomness, safe for SSR
  * hydration.
  *
- * Promo cadence (chosen to feel rare but present):
- *  - An АртЛента+ promo lands roughly every 10th slot (offset +5)
- *  - An Amur promo lands roughly every 14th slot (offset +9)
- * Two promos never collide in adjacent slots — we always keep at least
- * one regular post between them.
+ * Promo cadence is deliberately front-loaded and then tapers into the
+ * middle of the feed, mirroring how real editorial feeds work: ads are
+ * more aggressive up top (when attention is highest) and thin out as
+ * readers scroll deeper.
+ *
+ * For the first 36 slots the planted positions are:
+ *   АртЛента+ :  slot 2, 7, 15, 26
+ *   Амур      :  slot 4, 11, 19, 31
+ *
+ * That yields ~8 promos across 36 items, with 5 of them in the first 20
+ * slots (dense start), 2 around the middle, and 1 deeper. For larger
+ * counts the pattern repeats every 36 slots so the density pattern is
+ * preserved however far the reader scrolls.
  */
+const ARTLENTA_PROMO_OFFSETS = [2, 7, 15, 26] as const
+const AMUR_PROMO_OFFSETS = [4, 11, 19, 31] as const
+const PROMO_CYCLE = 36
+
 export function generateFeedItems(count: number): FeedItem[] {
+  const artlentaSlots = new Set<number>()
+  const amurSlots = new Set<number>()
+  for (let cycle = 0; cycle * PROMO_CYCLE < count; cycle++) {
+    const base = cycle * PROMO_CYCLE
+    ARTLENTA_PROMO_OFFSETS.forEach((o) => artlentaSlots.add(base + o))
+    AMUR_PROMO_OFFSETS.forEach((o) => amurSlots.add(base + o))
+  }
+
   const out: FeedItem[] = []
   let postIdx = 0
   let lastKind: "post" | "promo" = "post"
 
   for (let slot = 0; slot < count; slot++) {
-    // Decide whether this slot is a promo.
-    const isArtlentaPromo = slot > 0 && slot % 10 === 5
-    const isAmurPromo = slot > 0 && slot % 14 === 9 && !isArtlentaPromo
+    const isArtlentaPromo = artlentaSlots.has(slot)
+    const isAmurPromo = !isArtlentaPromo && amurSlots.has(slot)
 
     if ((isArtlentaPromo || isAmurPromo) && lastKind !== "promo") {
       if (isArtlentaPromo) {
