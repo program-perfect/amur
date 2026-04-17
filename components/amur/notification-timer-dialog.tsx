@@ -181,8 +181,8 @@ function scheduleNotification(seconds: number) {
   const timerId = window.setTimeout(() => {
     new Notification("Амур", {
       body: "У вас новое совпадение!",
-      icon: "/profiles/maestro.png", // Use one of the profile pics as icon
-      badge: "/profiles/maestro.png",
+      icon: "/profiles/max.webp", // Notification comes from Max
+      badge: "/profiles/max.webp",
       tag: "amur-match",
     })
     // Remove timer ID from storage
