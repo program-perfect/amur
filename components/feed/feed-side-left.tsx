@@ -125,13 +125,17 @@ export function FeedSideLeft() {
         ))}
       </ul>
 
-      {/* Post CTA */}
+      {/* Post CTA — warm amber pill with crisp white label + subtle
+          ink shadow so the word keeps its weight against the glow. */}
       <button
         type="button"
         className="w-full cursor-pointer rounded-full px-4 py-3 text-[14px] font-semibold transition-opacity hover:opacity-90"
         style={{
           backgroundColor: "var(--feed-accent)",
-          color: "oklch(0.2 0.06 40)",
+          color: "#ffffff",
+          textShadow: "0 1px 1px oklch(0.35 0.12 40 / 0.35)",
+          boxShadow:
+            "0 8px 20px -8px oklch(0.68 0.2 45 / 0.55), inset 0 1px 0 oklch(1 0 0 / 0.3)",
         }}
       >
         Новая запись
@@ -303,14 +307,26 @@ function ProfileBadge() {
             </div>
           </div>
 
-          {/* Track */}
+          {/* Track — now taller (h-2.5) and more deeply embossed so the
+              fill reads as a physically recessed channel. The bottom
+              edge has a bright highlight (light catches the lip) while
+              the top carries a darker shadow (as if the track were
+              carved into the card surface). */}
           <div
-            className="relative h-2 overflow-hidden rounded-full"
+            className="relative h-2.5 overflow-hidden rounded-full"
             style={{
               backgroundColor:
-                "color-mix(in oklab, var(--feed-muted-strong) 80%, transparent)",
-              boxShadow:
-                "inset 0 1px 2px oklch(0.22 0.02 255 / 0.08), inset 0 -1px 0 oklch(1 0 0 / 0.7)",
+                "color-mix(in oklab, var(--feed-muted-strong) 85%, transparent)",
+              boxShadow: [
+                // Deep top shadow — gives the "carved-in" feel
+                "inset 0 2px 3px oklch(0.22 0.02 255 / 0.18)",
+                "inset 0 1px 1px oklch(0.22 0.02 255 / 0.12)",
+                // Bright bottom highlight — light catches the lower lip
+                "inset 0 -1.5px 0 oklch(1 0 0 / 0.95)",
+                "inset 0 -2px 1px oklch(1 0 0 / 0.5)",
+                // Thin rim for definition
+                "inset 0 0 0 1px oklch(0.22 0.02 255 / 0.06)",
+              ].join(", "),
             }}
           >
             {/* Glowing fill */}
@@ -319,22 +335,39 @@ function ProfileBadge() {
               style={{
                 width: `${progress}%`,
                 background:
-                  "linear-gradient(90deg, oklch(0.72 0.2 40) 0%, oklch(0.78 0.19 55) 55%, oklch(0.86 0.16 70) 100%)",
+                  "linear-gradient(90deg, oklch(0.7 0.21 38) 0%, oklch(0.78 0.2 52) 55%, oklch(0.86 0.17 68) 100%)",
                 boxShadow: [
-                  "0 0 8px 0 oklch(0.78 0.2 50 / 0.7)",
-                  "0 0 16px 0 oklch(0.78 0.2 50 / 0.45)",
-                  "inset 0 1px 0 oklch(1 0 0 / 0.5)",
-                  "inset 0 -1px 0 oklch(0.5 0.12 40 / 0.4)",
+                  // External amber glow that bleeds onto the card
+                  "0 0 8px 0 oklch(0.78 0.2 50 / 0.75)",
+                  "0 0 18px 0 oklch(0.78 0.2 50 / 0.5)",
+                  // Internal highlights — top bright lip, bottom darker seam
+                  "inset 0 1px 0 oklch(1 0 0 / 0.6)",
+                  "inset 0 -1.5px 0 oklch(0.45 0.14 35 / 0.55)",
                 ].join(", "),
               }}
             >
-              {/* Specular highlight that shimmers slowly along the fill */}
+              {/* ── Diagonal chevron pattern ──────────────────────────
+                  A tight 45° stripe overlay constrained to the fill
+                  using its own rounded mask. The stripes are a bright
+                  amber tint at low opacity so they read as polished
+                  texture rather than flat graphic hatching. */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 rounded-full"
+                style={{
+                  background:
+                    "repeating-linear-gradient(135deg, oklch(1 0 0 / 0.28) 0 4px, transparent 4px 8px)",
+                  mixBlendMode: "overlay",
+                }}
+              />
+
+              {/* Specular highlight that shimmers along the fill */}
               <div
                 aria-hidden="true"
                 className="absolute inset-y-0 left-0 w-full rounded-full"
                 style={{
                   background:
-                    "linear-gradient(90deg, transparent 0%, oklch(1 0 0 / 0.35) 50%, transparent 100%)",
+                    "linear-gradient(90deg, transparent 0%, oklch(1 0 0 / 0.4) 50%, transparent 100%)",
                   mixBlendMode: "overlay",
                 }}
               />
