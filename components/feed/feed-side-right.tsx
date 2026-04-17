@@ -1,10 +1,10 @@
 "use client"
 
 import {
-  CloudSnow,
+  Cloudy,
   Music,
   TrendingUp,
-  UserPlus,
+  UserPlus
 } from "lucide-react"
 import { useRef, useState } from "react"
 
@@ -115,21 +115,21 @@ export function FeedSideRight() {
               Артемьевск · сегодня
             </div>
             <div className="mt-2 font-serif text-4xl leading-none">
-              −3°
+              11°
             </div>
             <div className="mt-2 text-[12.5px] opacity-80">
               Облачно, ветер 3 м/с
             </div>
           </div>
-          <CloudSnow className="h-10 w-10 opacity-80" strokeWidth={1.4} />
+          <Cloudy className="h-10 w-10 opacity-80" strokeWidth={1.4} />
         </div>
         <div
           className="mt-4 grid grid-cols-3 gap-2 text-[11px] opacity-85"
         >
           {[
-            { t: "15:00", tmp: "−1°" },
-            { t: "18:00", tmp: "−3°" },
-            { t: "21:00", tmp: "−5°" },
+            { t: "15:00", tmp: "11°" },
+            { t: "18:00", tmp: "12°" },
+            { t: "21:00", tmp: "9°" },
           ].map((h) => (
             <div
               key={h.t}
