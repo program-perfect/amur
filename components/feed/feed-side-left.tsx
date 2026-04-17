@@ -4,6 +4,7 @@ import {
   Bookmark,
   CalendarRange,
   Compass,
+  Flame,
   Hash,
   Home,
   Map,
@@ -41,63 +42,42 @@ const nav: NavItem[] = [
 export function FeedSideLeft() {
   return (
     <nav aria-label="Главная навигация АртЛенты" className="flex flex-col gap-5">
-      {/* Mini-profile card */}
+      {/* ── Mini-profile badge ────────────────────────────────────────
+          Glowing, slightly translucent card framed with a soft amber
+          halo and an inner peach-light highlight. Below the identity
+          row sits a Reddit-style karma bar: a thin pill track where an
+          orange gradient fills toward the next tier threshold, with a
+          soft flame-coloured glow pulsing behind the fill. */}
+      <ProfileBadge />
+
+      {/* Mini-profile stats strip — separated from the glowing badge so
+          the glow effect stays tight around the identity card without
+          spilling over the generic numbers below. */}
       <div
-        className="rounded-3xl p-4"
-        style={{ backgroundColor: "var(--feed-surface)" }}
+        className="grid grid-cols-3 gap-1 text-center"
+        style={{ color: "var(--feed-ink-soft)" }}
       >
-        <div className="flex items-center gap-3">
+        {[
+          { v: "142", l: "подписки" },
+          { v: "24", l: "посты" },
+          { v: "1.2K", l: "чтения" },
+        ].map((s) => (
           <div
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-[15px] font-bold"
-            style={{
-              backgroundColor: "var(--feed-ink)",
-              color: "var(--feed-bg)",
-            }}
-            aria-hidden="true"
+            key={s.l}
+            className="rounded-xl py-2"
+            style={{ backgroundColor: "var(--feed-muted)" }}
           >
-            Т
-          </div>
-          <div className="min-w-0 flex-1">
             <div
-              className="truncate text-[14px] font-semibold leading-tight"
+              className="text-[14px] font-semibold leading-none"
               style={{ color: "var(--feed-ink)" }}
             >
-              Татьяна Спиридонова
+              {s.v}
             </div>
-            <div
-              className="mt-0.5 truncate text-[12px]"
-              style={{ color: "var(--feed-ink-faint)" }}
-            >
-              @tata.spiri · Артемьевск
+            <div className="mt-1 text-[10.5px] uppercase tracking-[0.1em]">
+              {s.l}
             </div>
           </div>
-        </div>
-        <div
-          className="mt-3 grid grid-cols-3 gap-1 text-center"
-          style={{ color: "var(--feed-ink-soft)" }}
-        >
-          {[
-            { v: "142", l: "подписки" },
-            { v: "24", l: "посты" },
-            { v: "1.2K", l: "чтения" },
-          ].map((s) => (
-            <div
-              key={s.l}
-              className="rounded-xl py-2"
-              style={{ backgroundColor: "var(--feed-muted)" }}
-            >
-              <div
-                className="text-[14px] font-semibold leading-none"
-                style={{ color: "var(--feed-ink)" }}
-              >
-                {s.v}
-              </div>
-              <div className="mt-1 text-[10.5px] uppercase tracking-[0.1em]">
-                {s.l}
-              </div>
-            </div>
-          ))}
-        </div>
+        ))}
       </div>
 
       {/* Primary nav */}
@@ -177,5 +157,198 @@ export function FeedSideLeft() {
         </Link>
       </div>
     </nav>
+  )
+}
+
+/**
+ * Glowing profile badge — the hero card of the left rail.
+ *
+ * Visual composition (back to front):
+ *   1. An outer soft amber halo rendered via layered `box-shadow`s that
+ *      radiate out from the card. The halo is the "light" leaking from
+ *      the badge onto the rose page.
+ *   2. A 1px accent-coloured border that acts as the rim of the glow.
+ *   3. A slightly transparent white card (92% feed-surface) so the warm
+ *      rose page tint faintly bleeds through, giving the badge a
+ *      lit-from-behind quality.
+ *   4. A gradient overlay in the top-left corner that simulates light
+ *      spilling into the card from a warm source.
+ *
+ * The karma row is Reddit-flavoured: a "Карма" label on the left with
+ * a flame glyph, the current score on the right, and a pill track
+ * filled with an orange→amber gradient that's wrapped in its own
+ * glow so the progress itself emits warmth.
+ */
+function ProfileBadge() {
+  // Demo values — in a real build these'd come from the user session.
+  const karma = 4820
+  const nextTier = 5000
+  const progress = Math.min(100, Math.round((karma / nextTier) * 100))
+
+  return (
+    <div className="relative">
+      {/* Outer glow halo. Split into multiple box-shadows so the falloff
+          feels soft without looking blurry. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -inset-2 rounded-[28px]"
+        style={{
+          background:
+            "radial-gradient(60% 55% at 30% 20%, oklch(0.82 0.14 55 / 0.35), transparent 70%), radial-gradient(50% 50% at 80% 90%, oklch(0.78 0.17 45 / 0.28), transparent 75%)",
+          filter: "blur(10px)",
+        }}
+      />
+
+      <div
+        className="relative rounded-3xl p-4 backdrop-blur-sm"
+        style={{
+          /* 92% opacity card — lets the rose page tint bleed in. */
+          backgroundColor:
+            "color-mix(in oklab, var(--feed-surface) 92%, transparent)",
+          /* Warm rim + soft inner light + lifted drop shadow. */
+          boxShadow: [
+            // Inner warm light coming from top-left
+            "inset 1px 1px 0 oklch(1 0 0 / 0.7)",
+            "inset 0 0 24px 2px oklch(0.92 0.1 55 / 0.35)",
+            // Outer rim (acts like a backlit border)
+            "0 0 0 1px oklch(0.78 0.14 55 / 0.45)",
+            // Amber glow
+            "0 0 24px -2px oklch(0.78 0.17 50 / 0.45)",
+            "0 8px 32px -10px oklch(0.68 0.2 45 / 0.4)",
+            // Soft drop shadow on page
+            "0 4px 16px -6px oklch(0.22 0.02 255 / 0.12)",
+          ].join(", "),
+        }}
+      >
+        {/* Top-left light spill — a soft highlight gradient painted
+            over the card to suggest a light source outside the frame. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 rounded-3xl"
+          style={{
+            background:
+              "radial-gradient(90% 60% at 15% 0%, oklch(1 0 0 / 0.55), transparent 55%)",
+          }}
+        />
+
+        {/* Identity row. */}
+        <div className="relative flex items-center gap-3">
+          <div className="relative shrink-0">
+            {/* Avatar rim glow */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -inset-0.5 rounded-full"
+              style={{
+                background:
+                  "conic-gradient(from 140deg, oklch(0.82 0.17 55), oklch(0.68 0.2 35), oklch(0.85 0.13 65), oklch(0.82 0.17 55))",
+                filter: "blur(3px)",
+                opacity: 0.85,
+              }}
+            />
+            <div
+              className="relative flex h-11 w-11 items-center justify-center rounded-full text-[15px] font-bold"
+              style={{
+                backgroundColor: "var(--feed-ink)",
+                color: "var(--feed-bg)",
+                boxShadow:
+                  "inset 0 1px 0 oklch(1 0 0 / 0.18), 0 0 0 2px var(--feed-surface)",
+              }}
+              aria-hidden="true"
+            >
+              Т
+            </div>
+          </div>
+          <div className="min-w-0 flex-1">
+            <div
+              className="truncate text-[14px] font-semibold leading-tight"
+              style={{ color: "var(--feed-ink)" }}
+            >
+              Татьяна Спиридонова
+            </div>
+            <div
+              className="mt-0.5 truncate text-[12px]"
+              style={{ color: "var(--feed-ink-faint)" }}
+            >
+              @tata.spiri · Артемьевск
+            </div>
+          </div>
+        </div>
+
+        {/* ── Reddit-style karma bar ──────────────────────────────────
+            Compact row: label + value on top, filled track below. */}
+        <div className="relative mt-4">
+          <div className="mb-1.5 flex items-center justify-between">
+            <div
+              className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.09em]"
+              style={{ color: "var(--feed-ink-soft)" }}
+            >
+              <Flame
+                className="h-3.5 w-3.5"
+                strokeWidth={2.2}
+                style={{ color: "oklch(0.68 0.2 45)" }}
+              />
+              Карма
+            </div>
+            <div
+              className="text-[12px] font-bold tabular-nums"
+              style={{ color: "var(--feed-ink)" }}
+            >
+              {karma.toLocaleString("ru-RU")}
+              <span
+                className="ml-1 font-medium"
+                style={{ color: "var(--feed-ink-faint)" }}
+              >
+                / {nextTier.toLocaleString("ru-RU")}
+              </span>
+            </div>
+          </div>
+
+          {/* Track */}
+          <div
+            className="relative h-2 overflow-hidden rounded-full"
+            style={{
+              backgroundColor:
+                "color-mix(in oklab, var(--feed-muted-strong) 80%, transparent)",
+              boxShadow:
+                "inset 0 1px 2px oklch(0.22 0.02 255 / 0.08), inset 0 -1px 0 oklch(1 0 0 / 0.7)",
+            }}
+          >
+            {/* Glowing fill */}
+            <div
+              className="relative h-full rounded-full transition-[width] duration-700 ease-out"
+              style={{
+                width: `${progress}%`,
+                background:
+                  "linear-gradient(90deg, oklch(0.72 0.2 40) 0%, oklch(0.78 0.19 55) 55%, oklch(0.86 0.16 70) 100%)",
+                boxShadow: [
+                  "0 0 8px 0 oklch(0.78 0.2 50 / 0.7)",
+                  "0 0 16px 0 oklch(0.78 0.2 50 / 0.45)",
+                  "inset 0 1px 0 oklch(1 0 0 / 0.5)",
+                  "inset 0 -1px 0 oklch(0.5 0.12 40 / 0.4)",
+                ].join(", "),
+              }}
+            >
+              {/* Specular highlight that shimmers slowly along the fill */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-y-0 left-0 w-full rounded-full"
+                style={{
+                  background:
+                    "linear-gradient(90deg, transparent 0%, oklch(1 0 0 / 0.35) 50%, transparent 100%)",
+                  mixBlendMode: "overlay",
+                }}
+              />
+            </div>
+          </div>
+
+          <div
+            className="mt-1.5 text-[10.5px]"
+            style={{ color: "var(--feed-ink-faint)" }}
+          >
+            До уровня «Летописец» — {(nextTier - karma).toLocaleString("ru-RU")}
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }

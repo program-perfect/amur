@@ -127,10 +127,11 @@ export default function FeedPage() {
           )}
         </main>
 
-        {/* Right rail — shown from xl up (desktop). Uses the always-visible
-            thin grey scrollbar so the widgets don't slide under a
-            transparent track when overflowing. */}
-        <aside className="sticky top-[140px] hidden h-[calc(100dvh-156px)] w-[280px] shrink-0 self-start overflow-y-auto pl-1 xl:block xl:w-[320px] scrollbar-feed">
+        {/* Right rail — shown from xl up (desktop). Scrollbar is fully
+            hidden (scrollbar-none) so the widgets float cleanly against
+            the feed paper; the column is still scrollable via wheel /
+            trackpad / touch. */}
+        <aside className="sticky top-[140px] hidden h-[calc(100dvh-156px)] w-[280px] shrink-0 self-start overflow-y-auto pl-1 xl:block xl:w-[320px] scrollbar-none">
           <FeedSideRight />
         </aside>
       </div>
