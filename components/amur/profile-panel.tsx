@@ -14,6 +14,7 @@ import {
 } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
+import { PhotoLightbox } from "./photo-lightbox"
 
 export function ProfilePanel({ conversation }: { conversation: Conversation }) {
   const [expanded, setExpanded] = useState(true)
@@ -124,22 +125,32 @@ export function ExpandedView({ conversation }: { conversation: Conversation }) {
   const { photos, name, age, city, distance, compatibility, about, facts, interests } =
     conversation
 
+  // `null` = closed; otherwise the index of the photo being inspected.
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+  const openLightbox = (i: number) => setLightboxIndex(i)
+  const closeLightbox = () => setLightboxIndex(null)
+
   return (
     <div className="flex flex-col not-only:flex-1 overflow-y-auto scrollbar-thin ">
-      {/* Hero photo */}
-      <div className="relative aspect-[4/5] w-full overflow-hidden">
+      {/* Hero photo — clicking it opens the lightbox */}
+      <button
+        type="button"
+        onClick={() => openLightbox(0)}
+        aria-label={`Открыть фото ${name}`}
+        className="group relative aspect-[4/5] w-full cursor-zoom-in overflow-hidden text-left"
+      >
         <Image
           src={photos[0] || "/placeholder.svg"}
           alt={name}
           fill
-          className="object-cover"
+          className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02]"
           sizes="360px"
           priority
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-foreground/70 via-foreground/10 to-transparent" />
 
         {/* Photo indicator */}
-        <div className="absolute left-4 right-4 top-4 flex gap-1 pl-10">
+        <div className="pointer-events-none absolute left-4 right-4 top-4 flex gap-1 pl-10">
           {photos.map((_, i) => (
             <div
               key={i}
@@ -153,7 +164,7 @@ export function ExpandedView({ conversation }: { conversation: Conversation }) {
         </div>
 
         {/* Name */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 text-background">
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 p-6 text-background">
           <div className="flex items-end justify-between gap-3">
             <div>
               <h2 className="font-serif text-4xl leading-none tracking-tight">
@@ -177,7 +188,7 @@ export function ExpandedView({ conversation }: { conversation: Conversation }) {
             </span>
           </div>
         </div>
-      </div>
+      </button>
 
       {/* Body */}
       <div className="flex h-full flex-col gap-6 px-6 py-6">
@@ -223,18 +234,21 @@ export function ExpandedView({ conversation }: { conversation: Conversation }) {
             <SectionTitle>Ещё фото</SectionTitle>
             <div className="grid grid-cols-2 gap-2">
               {photos.slice(1).map((src, i) => (
-                <div
+                <button
                   key={src}
-                  className="relative aspect-[3/4] overflow-hidden rounded-xl"
+                  type="button"
+                  onClick={() => openLightbox(i + 1)}
+                  aria-label={`Открыть фото ${i + 2}`}
+                  className="group relative aspect-[3/4] cursor-zoom-in overflow-hidden rounded-xl ring-1 ring-border/40 transition-all hover:ring-primary/40"
                 >
                   <Image
                     src={src || "/placeholder.svg"}
-                    alt={`Фото ${i + 2}`}
+                    alt={`Фото ${name} ${i + 2}`}
                     fill
-                    className="object-cover"
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                     sizes="160px"
                   />
-                </div>
+                </button>
               ))}
             </div>
           </section>
@@ -251,6 +265,14 @@ export function ExpandedView({ conversation }: { conversation: Conversation }) {
           </button>
         </div>
       </div>
+
+      <PhotoLightbox
+        photos={photos}
+        index={lightboxIndex}
+        alt={name}
+        onClose={closeLightbox}
+        onIndexChange={setLightboxIndex}
+      />
     </div>
   )
 }

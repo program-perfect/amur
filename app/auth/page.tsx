@@ -68,7 +68,14 @@ function AuthShell({ children }: { children: React.ReactNode }) {
       <header className="relative z-50 w-full">
         <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-6">
           <Link href="/" className="flex items-center gap-2">
-            <Image src="/amur-logo.png" alt="Амур" width={110} height={36} className="h-8 w-auto" priority />
+            <Image
+              src="/amur-logo.png"
+              alt="Амур"
+              width={200}
+              height={36}
+              className="h-30 w-auto"
+              priority
+            />
           </Link>
           <Link href="/" className="text-sm text-[#2a1418]/60 transition-colors hover:text-[#2a1418]">
             Назад
