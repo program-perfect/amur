@@ -16,11 +16,23 @@ import {
 } from "@/lib/feed-data"
 import { useMemo, useState } from "react"
 
+// Full category list for the feed header and bottom dock. Order is
+// editorial: the most-browsed verticals appear first, with niche
+// sections ("История", "Барахолка") lower in the strip. The bottom
+// dock scrolls horizontally so long labels on mobile never clip.
 const categories = [
   { id: "all", label: "Всё" },
   { id: "infra", label: "Инфраструктура" },
   { id: "culture", label: "Культура" },
   { id: "evening", label: "Вечер" },
+  { id: "food", label: "Еда" },
+  { id: "sport", label: "Спорт" },
+  { id: "nature", label: "Природа" },
+  { id: "transport", label: "Транспорт" },
+  { id: "tech", label: "Технологии" },
+  { id: "market", label: "Барахолка" },
+  { id: "kids", label: "Дети" },
+  { id: "history", label: "История" },
   { id: "books", label: "Книги" },
 ] as const
 
@@ -29,7 +41,10 @@ type CategoryId = (typeof categories)[number]["id"]
 export default function FeedPage() {
   const [active, setActive] = useState<CategoryId>("all")
   // Deterministic generation — SSR and client render identical content.
-  const items = useMemo(() => generateFeedItems(36), [])
+  // Count is tuned so each of the ~13 categories gets several posts when
+  // filtered: we cycle through 22 templates, so 72 slots yields ≈3 posts
+  // per vertical plus the two planted promos.
+  const items = useMemo(() => generateFeedItems(72), [])
 
   const visible: FeedItem[] = useMemo(() => {
     const cat: FeedCategory | "all" = active
@@ -140,20 +155,19 @@ export default function FeedPage() {
 
         {/* Right rail — shown from xl up (desktop). Reaches a touch
             higher (top-[112px]) and all the way down to the viewport
-            bottom so the column never shows an empty bleed. The top
-            edge is covered by a soft gradient "shadow" (painted over
-            the content via a `::before`-style overlay using the aside's
-            mask) so content dissolves smoothly as it slides under the
-            sticky header, while the bottom ends flush against the page
-            edge — no fade, just content. Scrollbar is fully hidden;
-            the column still scrolls via wheel / trackpad / touch. */}
+            bottom so the column never shows an empty bleed. Both the
+            top and the bottom edges fade out via a soft `mask-image`
+            gradient so content dissolves into the page on either side
+            of the sticky container — matching the left rail's
+            treatment. Scrollbar is fully hidden; the column still
+            scrolls via wheel / trackpad / touch. */}
         <aside
-          className="sticky top-[112px] hidden h-[calc(100dvh-112px)] w-[296px] shrink-0 self-start overflow-y-auto px-4 pb-8 pt-6 xl:block xl:w-[336px] scrollbar-none"
+          className="sticky top-[112px] hidden h-[calc(100dvh-112px)] w-[296px] shrink-0 self-start overflow-y-auto px-4 pb-10 pt-6 xl:block xl:w-[336px] scrollbar-none"
           style={{
             WebkitMaskImage:
-              "linear-gradient(to bottom, transparent 0, black 28px, black 100%)",
+              "linear-gradient(to bottom, transparent 0, black 28px, black calc(100% - 36px), transparent 100%)",
             maskImage:
-              "linear-gradient(to bottom, transparent 0, black 28px, black 100%)",
+              "linear-gradient(to bottom, transparent 0, black 28px, black calc(100% - 36px), transparent 100%)",
           }}
         >
           <FeedSideRight />

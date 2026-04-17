@@ -47,8 +47,15 @@ export function FeedSideLeft() {
           halo and an inner peach-light highlight. Below the identity
           row sits a Reddit-style karma bar: a thin pill track where an
           orange gradient fills toward the next tier threshold, with a
-          soft flame-coloured glow pulsing behind the fill. */}
-      <ProfileBadge />
+          soft flame-coloured glow pulsing behind the fill.
+
+          `mb-3` nudges everything that follows (stats strip, nav list,
+          CTA) a touch further down the column so the badge has a
+          visible gap between itself and the stats, giving the glow
+          more room to feel like it's radiating from an isolated card. */}
+      <div className="mb-3">
+        <ProfileBadge />
+      </div>
 
       {/* Mini-profile stats strip — separated from the glowing badge so
           the glow effect stays tight around the identity card without
