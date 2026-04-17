@@ -11,17 +11,17 @@ import {
 import { ProfilePanel } from "@/components/amur/profile-panel"
 import { ProfileSheet } from "@/components/amur/profile-sheet"
 import {
-  conversations as seed,
   defaultTypingProfile,
+  conversations as seed,
   type Conversation,
   type Message,
   type ScriptStep,
   type TypingProfile,
 } from "@/lib/amur-data"
-import { getConversationId, getChatId } from "@/lib/chat-ids"
+import { getChatId, getConversationId } from "@/lib/chat-ids"
 import { cn } from "@/lib/utils"
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useSearchParams } from "next/navigation"
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 function MessengerPageLoader() {
   return (
@@ -122,25 +122,25 @@ function formatStatusLabel(
   conv: Conversation,
   now: number,
 ): string {
-  if (state.online) return "В сети"
+  if (state.online) return 'В сети'
   if (
     state.scenarioFinishedAt !== null &&
     now - state.scenarioFinishedAt < JUST_NOW_WINDOW_MS
   ) {
-    return "Был в сети только что"
+    return 'Был в сети только что'
   }
   if (state.goneOfflineAt !== null) {
     const diffMs = Math.max(0, now - state.goneOfflineAt)
     const minutes = Math.floor(diffMs / 60_000)
-    if (minutes < 1) return "Был в сети только что"
+    if (minutes < 1) return 'Был в сети только что'
     if (minutes < 60) {
-      return `Был в сети ${minutes} ${pluralize(minutes, "минуту", "минуты", "минут")} назад`
+      return `Был в сети ${minutes} ${pluralize(minutes, 'минуту', 'минуты', 'минут')} назад`
     }
     const hours = Math.floor(minutes / 60)
     if (hours < 24) {
-      return `Был в сети ${hours} ${pluralize(hours, "час", "часа", "часов")} назад`
+      return `Был в сети ${hours} ${pluralize(hours, 'час', 'часа', 'часов')} назад`
     }
-    return "Был в сети давно"
+    return 'Был в сети давно'
   }
   return conv.status
 }
@@ -603,12 +603,16 @@ function MessengerPage() {
     return byId
   }, [state])
 
-  const scenarioDone =
-    activeConv.script.length <= activeState.scriptIndex
+  const [isMounted, setIsMounted] = useState(false)
 
-  // Hint for the composer: show the next scripted "me" line so the user
-  // knows what they're about to send. When the upcoming step is "them",
-  // the hint fades out. When the scenario is over, the hint disappears.
+  useEffect(() => {
+    setIsMounted(true)
+    setNow(Date.now())
+  }, [])
+
+  const scenarioDone =
+  activeConv.script.length <= activeState.scriptIndex
+
   const nextStep = activeConv.script[activeState.scriptIndex]
   const nextHint =
     !scenarioDone && nextStep && nextStep.from === "me"
@@ -617,7 +621,9 @@ function MessengerPage() {
         : nextStep.caption ?? "Отправить фотографию"
       : null
 
-  const activeStatusLabel = formatStatusLabel(activeState, activeConv, now)
+  const activeStatusLabel = isMounted
+    ? formatStatusLabel(activeState, activeConv, now)
+    : activeConv.status
 
   return (
     <main className="relative flex h-dvh w-full overflow-hidden bg-sidebar">
