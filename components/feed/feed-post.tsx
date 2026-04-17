@@ -289,7 +289,7 @@ export function FeedPost({ post }: { post: FeedPostData }) {
           aria-label={`Поделиться · ${post.shares}`}
         >
           <Share2 className="h-[18px] w-[18px]" strokeWidth={1.8} />
-          <span className="hidden xs:inline sm:inline">Поделиться</span>
+          <span>Поделиться</span>
         </button>
 
         <button

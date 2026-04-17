@@ -141,7 +141,7 @@ export function NotificationTimerDialog({
           aria-modal="true"
           aria-labelledby="notification-dialog-title"
           className={cn(
-            "pointer-events-auto w-[92vw] max-w-md rounded-3xl bg-card p-6 shadow-xl ring-1 ring-border/60",
+            "pointer-events-auto relative w-[92vw] max-w-md rounded-3xl bg-card p-6 shadow-xl ring-1 ring-border/60",
             "max-h-[calc(100dvh-2rem)] overflow-y-auto scrollbar-thin",
             isExiting ? "animate-scale-out" : "animate-scale-in",
           )}
@@ -308,6 +308,7 @@ export function NotificationTimerDialog({
         >
           Сохранить настройки
         </button>
+        </div>
       </div>
     </>
   )

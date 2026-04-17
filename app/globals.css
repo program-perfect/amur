@@ -203,6 +203,29 @@ html {
     transform: translate(-50%, -50%) scale(0.94);
   }
 }
+/* Scale-only popup — used when the dialog is centered via a flex wrapper
+   (no translate needed in the keyframe, so content-height changes don't
+   push the dialog off-center). */
+@keyframes amur-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes amur-scale-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+}
 @layer utilities {
   .animate-message-in {
     animation: amur-msg-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -215,6 +238,12 @@ html {
   }
   .animate-pop-out {
     animation: amur-pop-out 200ms cubic-bezier(0.4, 0, 1, 1) both;
+  }
+  .animate-scale-in {
+    animation: amur-scale-in 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .animate-scale-out {
+    animation: amur-scale-out 200ms cubic-bezier(0.4, 0, 1, 1) both;
   }
 }
 
@@ -237,5 +266,14 @@ html {
   }
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background: var(--muted-foreground);
+  }
+
+  /* Fully hidden scrollbar — used by horizontally scrolling chip rows. */
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
   }
 }
