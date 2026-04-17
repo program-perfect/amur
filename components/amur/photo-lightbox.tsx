@@ -7,19 +7,12 @@ import { useCallback, useEffect, useState } from "react"
 
 interface PhotoLightboxProps {
   photos: string[]
-  /** Index of the currently opened photo. `null` means closed. */
   index: number | null
   alt: string
   onClose: () => void
   onIndexChange: (next: number) => void
 }
 
-/**
- * Fullscreen modal that displays a character's photo at a larger size.
- * Works as an overlay on top of the profile panel / sheet and supports
- * keyboard navigation (Esc, ←, →) plus on-screen controls when the
- * conversation has more than one photo.
- */
 export function PhotoLightbox({
   photos,
   index,
@@ -98,7 +91,8 @@ export function PhotoLightbox({
       <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-6 lg:p-10">
         <div
           className={cn(
-            "relative flex h-full max-h-[88dvh] w-full max-w-6xl items-center justify-center",
+            "relative flex w-full max-w-6xl items-center justify-center",
+            "max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-3rem)] lg:max-h-[calc(100dvh-5rem)]",
             isOpen ? "animate-scale-in" : "animate-scale-out",
           )}
         >
@@ -122,10 +116,15 @@ export function PhotoLightbox({
             </button>
           )}
 
-          <div className="relative h-full w-full overflow-hidden rounded-2xl">
+          <div
+            className={cn(
+              "relative w-full overflow-hidden rounded-2xl",
+              "h-[min(82dvh,900px)] sm:h-[min(84dvh,960px)]",
+            )}
+          >
             <div key={current} className="relative h-full w-full animate-scale-in">
               <Image
-                src={src || "/placeholder.svg"}
+                src={src}
                 alt={`${alt} — фото ${current + 1}`}
                 fill
                 priority
