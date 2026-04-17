@@ -612,7 +612,7 @@ function MessengerPage() {
   return (
     <main className="relative flex h-dvh w-full overflow-hidden bg-sidebar">
       {/* Desktop vertical left nav (xl+) */}
-      <LeftNav />
+      <LeftNav onOpenNotifications={notificationDialog.open} />
 
       <div className="flex min-w-0 flex-1 gap-2 p-2 md:gap-3 md:p-3">
         {/* Main messenger card — conversations + chat as one rounded surface */}

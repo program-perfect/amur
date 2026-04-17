@@ -9,16 +9,16 @@ const DISMISSED_KEY = "amur-notification-dismissed"
 
 type TimerOption = {
   label: string
-  value: number // minutes, 0 = off
+  value: number // seconds, 0 = off
 }
 
 const timerOptions: TimerOption[] = [
   { label: "Выключить", value: 0 },
-  { label: "5 минут", value: 5 },
-  { label: "15 минут", value: 15 },
-  { label: "30 минут", value: 30 },
-  { label: "1 час", value: 60 },
-  { label: "2 часа", value: 120 },
+  { label: "10 секунд", value: 10 },
+  { label: "30 секунд", value: 30 },
+  { label: "45 секунд", value: 45 },
+  { label: "1 минута", value: 60 },
+  { label: "2 минуты", value: 120 },
 ]
 
 export function NotificationTimerDialog({
@@ -28,7 +28,7 @@ export function NotificationTimerDialog({
   open: boolean
   onClose: () => void
 }) {
-  const [selectedTimer, setSelectedTimer] = useState<number>(15)
+  const [selectedTimer, setSelectedTimer] = useState<number>(30)
   const [isExiting, setIsExiting] = useState(false)
 
   // Load saved timer value on mount
@@ -167,7 +167,7 @@ export function NotificationTimerDialog({
 /**
  * Schedule a browser notification after the specified delay
  */
-function scheduleNotification(minutes: number) {
+function scheduleNotification(seconds: number) {
   if (!("Notification" in window)) return
   if (Notification.permission !== "granted") return
 
@@ -187,7 +187,7 @@ function scheduleNotification(minutes: number) {
     })
     // Remove timer ID from storage
     window.sessionStorage.removeItem("amur-notification-timer-id")
-  }, minutes * 60 * 1000)
+  }, seconds * 1000)
 
   // Store timer ID for potential cancellation
   window.sessionStorage.setItem("amur-notification-timer-id", timerId.toString())
@@ -217,6 +217,7 @@ export function useNotificationDialog() {
 
   return {
     isOpen,
+    open: () => setIsOpen(true),
     close: () => setIsOpen(false),
   }
 }
