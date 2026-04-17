@@ -74,11 +74,11 @@ export type TypingProfile = {
  * Matches the previous hard-coded behaviour (550 / 1400 / 1800 ms).
  */
 export const defaultTypingProfile: TypingProfile = {
-  startDelay: 550,
-  msPerChar: 35,
-  minDelay: 1000,
-  maxDelay: 3500,
-  imageDelay: 1800,
+  startDelay: 1100,
+  msPerChar: 70,
+  minDelay: 2200,
+  maxDelay: 7500,
+  imageDelay: 3800,
 };
 
 export type Conversation = {
@@ -158,11 +158,11 @@ export const conversations: Conversation[] = [
     suggestion: "Хорошо, собираюсь.",
     // Маэстро пишет размеренно и с паузами — как будто подбирает слова.
     typingProfile: {
-      startDelay: 900,
-      msPerChar: 50,
-      minDelay: 1800,
-      maxDelay: 5200,
-      imageDelay: 2600,
+      startDelay: 1800,
+      msPerChar: 110,
+      minDelay: 3800,
+      maxDelay: 11000,
+      imageDelay: 5400,
     },
     script: [
       {
@@ -219,11 +219,11 @@ export const conversations: Conversation[] = [
     suggestion: "Нужен фрагмент сценария с его сообщениями",
     // Алексей — спокойный собеседник среднего темпа.
     typingProfile: {
-      startDelay: 650,
-      msPerChar: 38,
-      minDelay: 1200,
-      maxDelay: 3600,
-      imageDelay: 2000,
+      startDelay: 1300,
+      msPerChar: 80,
+      minDelay: 2500,
+      maxDelay: 7800,
+      imageDelay: 4200,
     },
     script: [
       // TODO:
@@ -267,11 +267,11 @@ export const conversations: Conversation[] = [
     suggestion: "Привет!) Как дела?",
     // Игорь — пишет быстро, порывисто, почти не задумываясь.
     typingProfile: {
-      startDelay: 280,
-      msPerChar: 22,
-      minDelay: 650,
-      maxDelay: 2400,
-      imageDelay: 1400,
+      startDelay: 600,
+      msPerChar: 48,
+      minDelay: 1400,
+      maxDelay: 5200,
+      imageDelay: 3000,
     },
     script: [
       // TODO:
@@ -308,11 +308,11 @@ export const conversations: Conversation[] = [
     suggestion: "Привет!) Как дела?",
     // Влад — пишет неспешно, часто отвлекается.
     typingProfile: {
-      startDelay: 1100,
-      msPerChar: 55,
-      minDelay: 2000,
-      maxDelay: 5800,
-      imageDelay: 2400,
+      startDelay: 2200,
+      msPerChar: 120,
+      minDelay: 4200,
+      maxDelay: 12500,
+      imageDelay: 5000,
     },
     script: [
       // TODO:
@@ -351,11 +351,11 @@ export const conversations: Conversation[] = [
     suggestion: "Я РАБОТАЮ В БИБЛИОТЕКЕ. СЕГОДНЯ У НАС ТЕАТРАЛИЗОВАННАЯ ПОСТАНОВКА. МОЖЕТ БЫТЬ ХОЧЕШЬ ПРИЙТИ?",
     // Макс пишет каждое слово капсом — чуть медленнее среднего, настойчиво.
     typingProfile: {
-      startDelay: 500,
-      msPerChar: 32,
-      minDelay: 1100,
-      maxDelay: 3400,
-      imageDelay: 1900,
+      startDelay: 1000,
+      msPerChar: 70,
+      minDelay: 2300,
+      maxDelay: 7200,
+      imageDelay: 4000,
     },
     script: [
       {
