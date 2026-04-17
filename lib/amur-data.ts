@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import {
+  BookIcon,
   Briefcase,
   Building2,
   Car,
@@ -8,17 +9,14 @@ import {
   Drama,
   Film,
   Footprints,
-  Gem,
   GraduationCap,
   Heart,
   MapPin,
-  Mountain,
   Music,
   Plane,
   Ruler,
   Utensils,
   Wine,
-  Wine as WineIcon,
 } from "lucide-react";
 
 export type Message =
@@ -92,9 +90,10 @@ export type Conversation = {
 
 /** Matches shown in the "Новые совпадения" strip */
 export const newMatches = [
-  { id: "n1", name: "Маэстро", avatar: "/profiles/maestro.jpg", isNew: true },
-  { id: "n2", name: "Макс", avatar: "/profiles/match-4.jpg", isNew: true },
-  { id: "n3", name: "Игорь", avatar: "/profiles/match-5.jpg" },
+  { id: "n1", name: "Маэстро", avatar: "/profiles/maestro.png", isNew: true },
+  { id: "n2", name: "Алексей", avatar: "/profiles/match-4.jpg" },
+  { id: "n3", name: "Игорь", avatar: "/profiles/match-4.jpg" },
+  { id: "n4", name: "Макс", avatar: "/profiles/max.webp", isNew: true },
 ];
 
 export const conversations: Conversation[] = [
@@ -102,37 +101,39 @@ export const conversations: Conversation[] = [
     id: "c1",
     name: "Маэстро",
     nameDative: "Маэстро",
-    avatar: "/profiles/maestro-main.jpg",
-    photos: ["/profiles/maestro-main.jpg", "/profiles/maestro-2.jpg", "/profiles/maestro-3.jpg"],
+    avatar: "/profiles/maestro.png",
+    photos: ["/profiles/maestro.png"],
     online: true,
     status: "В сети · отвечает быстро",
-    verified: true,
+    verified: false,
     city: "Артемьевск",
-    distance: "4 км",
-    compatibility: 94,
-    about:
-      "Состоявшийся мужчина старой школы. Ценю красоту, вкус и уважение к статусу. Люблю, когда женщина умеет держать себя.",
-    facts: [
-      { icon: Briefcase, label: "Бизнесмен" },
-      { icon: GraduationCap, label: "Высшее" },
-      { icon: MapPin, label: "Артемьевск · 8 км от вас" },
-      { icon: Ruler, label: "182 см" },
-      { icon: Wine, label: "Любит хорошее вино" },
-    ],
+    distance: "3 км",
+    compatibility: 96,
+    about: "Ищу достойную женщину, которая сможет украсить мою жизнь.",
+    facts: [{ icon: MapPin, label: "Артемьевск · 8 км от вас" }],
     interests: [
+      { label: "Кино", icon: Film },
       { label: "Рестораны", icon: Utensils },
-      { label: "Антиквариат", icon: Gem },
-      { label: "Охота", icon: Mountain },
-      { label: "Дорогие вина", icon: WineIcon },
+      { label: "Книги", icon: BookIcon },
     ],
     matchedLabel: "Вы совпали сегодня",
     preview: {
-      lastMessage: "Вы меня очаровали. Позвольте вас пригласить в ваш любимый «Купидон» через час",
+      lastMessage: "Вы совпали сегодня",
       time: "только что",
       unread: 1,
     },
-    suggestion: "Почему именно «Купидон»?",
+    suggestion: "Хорошо, собираюсь.",
     script: [
+      {
+        kind: "text",
+        from: "them",
+        text: "Какие фильмы из Новой волны тебе нравятся?",
+      },
+      {
+        kind: "text",
+        from: "me",
+        text: "Люблю ту Новую волну, где есть вкус к жизни: красивые диалоги, красивые люди, лёгкая дерзость. Годар, конечно. Хотя хороший собеседник иногда интереснее любого кино...",
+      },
       {
         kind: "text",
         from: "them",
@@ -151,21 +152,18 @@ export const conversations: Conversation[] = [
     name: "Алексей",
     nameDative: "Алексею",
     age: 38,
-    avatar: "/profiles/aleksey-main.jpg",
-    photos: ["/profiles/aleksey-main.jpg"],
+    avatar: "/profiles/match-3.jpg",
+    photos: ["/profiles/match-3.jpg"],
     online: false,
     status: "Был в сети 20 минут назад",
-    verified: false,
+    verified: true,
     city: "Артемьевск",
     distance: "4,5 км",
-    compatibility: 71,
-    about: "Без цирка и лишнего пафоса. Люблю честность, спокойные разговоры и когда человек не играет чужую роль.",
+    compatibility: 85,
+    about: "",
     facts: [
-      { icon: Briefcase, label: "Следователь" },
-      { icon: GraduationCap, label: "Юридическое" },
       { icon: MapPin, label: "Артемьевск · 4,5 км от вас" },
       { icon: Ruler, label: "179 см" },
-      { icon: Wine, label: "Иногда" },
     ],
     interests: [
       { label: "Кино", icon: Film },
@@ -174,7 +172,7 @@ export const conversations: Conversation[] = [
     ],
     matchedLabel: "Вы совпали 3 дня назад",
     preview: {
-      lastMessage: "Переписка не подтверждена сценарием",
+      lastMessage: "Вы совпали 3 дня назад",
       time: "—",
     },
     suggestion: "Нужен фрагмент сценария с его сообщениями",
@@ -190,9 +188,9 @@ export const conversations: Conversation[] = [
     name: "Игорь",
     nameDative: "Игорю",
     age: 36,
-    avatar: "/profiles/lelik-main.jpg",
-    photos: ["/profiles/lelik-main.jpg"],
-    online: true,
+    avatar: "/profiles/match-4.jpg",
+    photos: ["/profiles/match-4.jpg"],
+    online: false,
     status: "В сети",
     verified: true,
     city: "Артемьевск",
@@ -214,10 +212,10 @@ export const conversations: Conversation[] = [
     ],
     matchedLabel: "Вы совпали неделю назад",
     preview: {
-      lastMessage: "Переписка не подтверждена сценарием",
+      lastMessage: "Вы совпали неделю назад",
       time: "—",
     },
-    suggestion: "Нужен фрагмент сценария с его сообщениями",
+    suggestion: "Привет!) Как дела?",
     script: [
       // TODO:
       // В приложенном фрагменте сценария нет пригодимой чат-переписки Лёлика
@@ -237,15 +235,9 @@ export const conversations: Conversation[] = [
     verified: true,
     city: "Артемьевск",
     distance: "5 км",
-    compatibility: 84,
-    about: "Ресторатор. Люблю красивые места, лёгких людей и когда вечер складывается сам собой.",
-    facts: [
-      { icon: Briefcase, label: "Владелец ресторана «Купидон»" },
-      { icon: GraduationCap, label: "Высшее" },
-      { icon: MapPin, label: "Артемьевск · 5 км от вас" },
-      { icon: Ruler, label: "186 см" },
-      { icon: Wine, label: "Разбирается в винах" },
-    ],
+    compatibility: 92,
+    about: "Люблю красивые места, лёгких людей и когда вечер складывается сам собой.",
+    facts: [{ icon: MapPin, label: "Артемьевск · 5 км от вас" }],
     interests: [
       { label: "Рестораны", icon: Utensils },
       { label: "Гастрономия", icon: CookingPot },
@@ -254,8 +246,9 @@ export const conversations: Conversation[] = [
     ],
     matchedLabel: "Вы совпали недавно",
     preview: {
-      lastMessage: "ПРИГЛАШЕНИЕ ОТ ТАКОЙ КРАСИВОЙ ДЕВУШКИ - БОЛЬШАЯ ЧЕСТЬ",
+      lastMessage: "Вы совпали недавно",
       time: "сегодня",
+      unread: 1,
     },
     suggestion: "Я РАБОТАЮ В БИБЛИОТЕКЕ. СЕГОДНЯ У НАС ТЕАТРАЛИЗОВАННАЯ ПОСТАНОВКА. МОЖЕТ БЫТЬ ХОЧЕШЬ ПРИЙТИ?",
     script: [
