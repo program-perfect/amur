@@ -127,17 +127,25 @@ export function NotificationTimerDialog({
         aria-hidden="true"
       />
 
-      {/* Dialog */}
+      {/* Centering layer — flex keeps the dialog exactly in the middle of the
+         viewport regardless of its content height, avoiding the drift that
+         can happen when combining Tailwind translate utilities with a
+         keyframe animation that also manipulates `transform`. */}
       <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="notification-dialog-title"
-        className={cn(
-          "fixed left-1/2 top-1/2 z-50 w-[92vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-3xl bg-card p-6 shadow-xl ring-1 ring-border/60",
-          "max-h-[90vh] overflow-y-auto scrollbar-thin",
-          isExiting ? "animate-pop-out" : "animate-pop-in",
-        )}
+        className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4"
+        aria-hidden="true"
       >
+        {/* Dialog */}
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="notification-dialog-title"
+          className={cn(
+            "pointer-events-auto relative w-[92vw] max-w-md rounded-3xl bg-card p-6 shadow-xl ring-1 ring-border/60",
+            "max-h-[calc(100dvh-2rem)] overflow-y-auto scrollbar-thin",
+            isExiting ? "animate-scale-out" : "animate-scale-in",
+          )}
+        >
         {/* Close button */}
         <button
           type="button"
@@ -300,6 +308,7 @@ export function NotificationTimerDialog({
         >
           Сохранить настройки
         </button>
+        </div>
       </div>
     </>
   )

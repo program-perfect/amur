@@ -52,7 +52,7 @@ export default function ProfilePage() {
     <main className="min-h-screen bg-background text-foreground">
       {/* Top bar */}
       <header className="sticky top-0 z-20 border-b border-border/60 bg-background/85 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-5 py-3.5 sm:px-8">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 px-4 py-3 xs:gap-4 xs:px-5 xs:py-3.5 sm:px-8">
           <Link
             href="/m"
             className="group inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
@@ -89,16 +89,16 @@ export default function ProfilePage() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-5xl px-5 py-8 sm:px-8 sm:py-10">
-        <div className="grid gap-8 lg:grid-cols-[400px_1fr]">
+      <div className="mx-auto max-w-5xl px-4 py-6 xs:px-5 xs:py-8 sm:px-8 sm:py-10">
+        <div className="grid gap-6 xs:gap-8 md:grid-cols-[320px_1fr] lg:grid-cols-[400px_1fr]">
           {/* Left: Hero photo card */}
-          <div className="lg:sticky lg:top-24 lg:self-start">
+          <div className="md:sticky md:top-24 md:self-start">
             <div className="relative aspect-4/5 w-full overflow-hidden rounded-3xl shadow-[0_1px_2px_rgba(120,50,20,0.04),0_20px_50px_-18px_rgba(120,50,20,0.25)] ring-1 ring-border">
               <Image
                 src={photos[0] || "/placeholder.svg"}
                 alt="Аватар"
                 fill
-                sizes="400px"
+                sizes="(max-width: 768px) 100vw, 400px"
                 priority
                 className="object-cover"
               />
@@ -232,7 +232,7 @@ export default function ProfilePage() {
                   Добавить фото
                 </button>
               </div>
-              <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+              <div className="grid grid-cols-2 gap-2 xs:gap-2.5 xs:grid-cols-3 md:grid-cols-2 lg:grid-cols-3">
                 {photos.slice(1).map((src, i) => (
                   <div
                     key={src}
