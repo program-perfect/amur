@@ -27,8 +27,6 @@ export function PhotoLightbox({
   onClose,
   onIndexChange,
 }: PhotoLightboxProps) {
-  // Mirror the open state with a small trailing delay so the exit
-  // animation has time to play before unmount.
   const [mounted, setMounted] = useState(index !== null)
   const isOpen = index !== null
 
@@ -37,6 +35,7 @@ export function PhotoLightbox({
       setMounted(true)
       return
     }
+
     const t = window.setTimeout(() => setMounted(false), 220)
     return () => clearTimeout(t)
   }, [isOpen])
@@ -53,13 +52,20 @@ export function PhotoLightbox({
 
   useEffect(() => {
     if (!isOpen) return
+
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose()
       if (e.key === "ArrowLeft") goPrev()
       if (e.key === "ArrowRight") goNext()
     }
+
     window.addEventListener("keydown", onKey)
-    return () => window.removeEventListener("keydown", onKey)
+    document.body.style.overflow = "hidden"
+
+    return () => {
+      window.removeEventListener("keydown", onKey)
+      document.body.style.overflow = ""
+    }
   }, [isOpen, onClose, goPrev, goNext])
 
   if (!mounted) return null
@@ -70,96 +76,94 @@ export function PhotoLightbox({
 
   return (
     <div
-      aria-hidden={!isOpen}
-      className={cn(
-        "fixed inset-0 z-[60]",
-        isOpen ? "pointer-events-auto" : "pointer-events-none",
-      )}
       role="dialog"
       aria-modal="true"
+      aria-hidden={!isOpen}
       aria-label={`${alt} — просмотр фото`}
+      className={cn(
+        "fixed inset-0 z-[60] overflow-hidden",
+        isOpen ? "pointer-events-auto" : "pointer-events-none",
+      )}
     >
-      {/* Scrim — closes on click */}
       <button
         type="button"
         aria-label="Закрыть просмотр фото"
         onClick={onClose}
         className={cn(
-          "absolute inset-0 cursor-zoom-out bg-foreground/80 backdrop-blur-sm transition-opacity duration-200",
+          "absolute inset-0 bg-black/75 backdrop-blur-sm transition-opacity duration-200",
           isOpen ? "opacity-100" : "opacity-0",
         )}
       />
 
-      {/* Close button */}
-      <button
-        type="button"
-        onClick={onClose}
-        aria-label="Закрыть"
-        className="absolute right-4 top-4 z-20 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-background/95 text-foreground shadow-lg ring-1 ring-border/40 transition-colors hover:bg-background"
-      >
-        <X className="h-5 w-5" strokeWidth={1.8} />
-      </button>
-
-      {/* Image + controls */}
-      <div
-        className={cn(
-          "absolute inset-0 flex items-center justify-center p-4 sm:p-8",
-          isOpen ? "animate-pop-in" : "animate-pop-out",
-        )}
-      >
-        {hasMany && (
+      <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-6 lg:p-10">
+        <div
+          className={cn(
+            "relative flex h-full max-h-[88dvh] w-full max-w-6xl items-center justify-center",
+            isOpen ? "animate-scale-in" : "animate-scale-out",
+          )}
+        >
           <button
             type="button"
-            onClick={goPrev}
-            aria-label="Предыдущее фото"
-            className="absolute left-4 z-10 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-background/95 text-foreground shadow-lg ring-1 ring-border/40 transition-colors hover:bg-background sm:left-6"
+            onClick={onClose}
+            aria-label="Закрыть"
+            className="absolute right-2 top-2 z-30 flex h-10 w-10 items-center justify-center rounded-full bg-background/90 text-foreground shadow-lg ring-1 ring-border/50 transition-colors hover:bg-background sm:right-4 sm:top-4"
           >
-            <ChevronLeft className="h-5 w-5" strokeWidth={1.8} />
+            <X className="h-5 w-5" strokeWidth={1.8} />
           </button>
-        )}
 
-        <div className="relative flex h-full max-h-[88dvh] w-full max-w-4xl items-center justify-center">
-          {/* Key forces re-mount so the image animates in on each navigation */}
-          <div
-            key={current}
-            className="relative h-full w-full animate-pop-in"
-          >
-            <Image
-              src={src || "/placeholder.svg"}
-              alt={`${alt} — фото ${current + 1}`}
-              fill
-              priority
-              sizes="(min-width: 1024px) 896px, 100vw"
-              className="rounded-2xl object-contain"
-            />
-          </div>
-        </div>
+          {hasMany && (
+            <button
+              type="button"
+              onClick={goPrev}
+              aria-label="Предыдущее фото"
+              className="absolute left-2 top-1/2 z-30 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-background/90 text-foreground shadow-lg ring-1 ring-border/50 transition-colors hover:bg-background sm:left-4"
+            >
+              <ChevronLeft className="h-5 w-5" strokeWidth={1.8} />
+            </button>
+          )}
 
-        {hasMany && (
-          <button
-            type="button"
-            onClick={goNext}
-            aria-label="Следующее фото"
-            className="absolute right-4 z-10 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-background/95 text-foreground shadow-lg ring-1 ring-border/40 transition-colors hover:bg-background sm:right-6"
-          >
-            <ChevronRight className="h-5 w-5" strokeWidth={1.8} />
-          </button>
-        )}
-
-        {hasMany && (
-          <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-1.5">
-            {photos.map((_, i) => (
-              <span
-                key={i}
-                aria-hidden
-                className={cn(
-                  "h-1.5 rounded-full bg-background/50 transition-all",
-                  i === current ? "w-5 bg-background" : "w-1.5",
-                )}
+          <div className="relative h-full w-full overflow-hidden rounded-2xl">
+            <div key={current} className="relative h-full w-full animate-scale-in">
+              <Image
+                src={src || "/placeholder.svg"}
+                alt={`${alt} — фото ${current + 1}`}
+                fill
+                priority
+                sizes="(min-width: 1280px) 1152px, (min-width: 768px) 80vw, 100vw"
+                className="object-contain"
               />
-            ))}
+            </div>
           </div>
-        )}
+
+          {hasMany && (
+            <button
+              type="button"
+              onClick={goNext}
+              aria-label="Следующее фото"
+              className="absolute right-2 top-1/2 z-30 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-background/90 text-foreground shadow-lg ring-1 ring-border/50 transition-colors hover:bg-background sm:right-4"
+            >
+              <ChevronRight className="h-5 w-5" strokeWidth={1.8} />
+            </button>
+          )}
+
+          {hasMany && (
+            <div className="absolute bottom-3 left-1/2 z-30 flex -translate-x-1/2 gap-1.5 rounded-full bg-black/35 px-3 py-2 backdrop-blur-sm sm:bottom-4">
+              {photos.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => onIndexChange(i)}
+                  aria-label={`Открыть фото ${i + 1}`}
+                  aria-pressed={i === current}
+                  className={cn(
+                    "h-2 rounded-full transition-all",
+                    i === current ? "w-5 bg-white" : "w-2 bg-white/55 hover:bg-white/75",
+                  )}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

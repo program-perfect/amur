@@ -309,55 +309,132 @@ html {
   }
 }
 @keyframes feed-reaction-like {
-  0% { transform: translateY(0) rotate(0); }
-  30% { transform: translateY(-6px) rotate(-10deg); }
-  60% { transform: translateY(-2px) rotate(6deg); }
-  100% { transform: translateY(0) rotate(0); }
+  0% {
+    transform: translateY(0) rotate(0);
+  }
+  30% {
+    transform: translateY(-6px) rotate(-10deg);
+  }
+  60% {
+    transform: translateY(-2px) rotate(6deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0);
+  }
 }
 @keyframes feed-reaction-fire {
-  0% { transform: scale(1); filter: brightness(1); }
-  25% { transform: scale(1.18) translateY(-2px); filter: brightness(1.15); }
-  50% { transform: scale(1.05) translateY(-4px) rotate(-4deg); }
-  75% { transform: scale(1.22) translateY(-2px) rotate(3deg); filter: brightness(1.2); }
-  100% { transform: scale(1); filter: brightness(1); }
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  25% {
+    transform: scale(1.18) translateY(-2px);
+    filter: brightness(1.15);
+  }
+  50% {
+    transform: scale(1.05) translateY(-4px) rotate(-4deg);
+  }
+  75% {
+    transform: scale(1.22) translateY(-2px) rotate(3deg);
+    filter: brightness(1.2);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
 }
 @keyframes feed-reaction-haha {
-  0% { transform: translateX(0) rotate(0); }
-  20% { transform: translateX(-3px) rotate(-8deg); }
-  40% { transform: translateX(3px) rotate(8deg); }
-  60% { transform: translateX(-2px) rotate(-5deg); }
-  80% { transform: translateX(2px) rotate(5deg); }
-  100% { transform: translateX(0) rotate(0); }
+  0% {
+    transform: translateX(0) rotate(0);
+  }
+  20% {
+    transform: translateX(-3px) rotate(-8deg);
+  }
+  40% {
+    transform: translateX(3px) rotate(8deg);
+  }
+  60% {
+    transform: translateX(-2px) rotate(-5deg);
+  }
+  80% {
+    transform: translateX(2px) rotate(5deg);
+  }
+  100% {
+    transform: translateX(0) rotate(0);
+  }
 }
 @keyframes feed-reaction-wow {
-  0% { transform: scale(1); }
-  40% { transform: scale(1.35); }
-  70% { transform: scale(0.95); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.35);
+  }
+  70% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 @keyframes feed-reaction-sad {
-  0% { transform: translateY(0) rotate(0); }
-  30% { transform: translateY(2px) rotate(-6deg); }
-  60% { transform: translateY(3px) rotate(4deg); }
-  100% { transform: translateY(0) rotate(0); }
+  0% {
+    transform: translateY(0) rotate(0);
+  }
+  30% {
+    transform: translateY(2px) rotate(-6deg);
+  }
+  60% {
+    transform: translateY(3px) rotate(4deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0);
+  }
 }
 @keyframes feed-reaction-angry {
-  0% { transform: translateX(0) scale(1); }
-  15% { transform: translateX(-2px) scale(1.08); }
-  30% { transform: translateX(2px) scale(1.08); }
-  45% { transform: translateX(-2px) scale(1.08); }
-  60% { transform: translateX(2px) scale(1.08); }
-  75% { transform: translateX(-1px) scale(1.04); }
-  100% { transform: translateX(0) scale(1); }
+  0% {
+    transform: translateX(0) scale(1);
+  }
+  15% {
+    transform: translateX(-2px) scale(1.08);
+  }
+  30% {
+    transform: translateX(2px) scale(1.08);
+  }
+  45% {
+    transform: translateX(-2px) scale(1.08);
+  }
+  60% {
+    transform: translateX(2px) scale(1.08);
+  }
+  75% {
+    transform: translateX(-1px) scale(1.04);
+  }
+  100% {
+    transform: translateX(0) scale(1);
+  }
 }
 @keyframes feed-reaction-pop {
-  0% { transform: scale(0.4); opacity: 0; }
-  60% { transform: scale(1.25); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.25);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 @keyframes feed-skeleton-shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 @layer utilities {
@@ -392,12 +469,7 @@ html {
   /* Animated shimmer for skeleton placeholders — used while a feed
      post's image hasn't finished loading. */
   .feed-skeleton {
-    background: linear-gradient(
-      90deg,
-      var(--feed-muted) 0%,
-      var(--feed-muted-strong) 50%,
-      var(--feed-muted) 100%
-    );
+    background: linear-gradient(90deg, var(--feed-muted) 0%, var(--feed-muted-strong) 50%, var(--feed-muted) 100%);
     background-size: 200% 100%;
     animation: feed-skeleton-shimmer 1.6s linear infinite;
   }
