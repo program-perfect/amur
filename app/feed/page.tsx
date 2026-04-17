@@ -16,11 +16,23 @@ import {
 } from "@/lib/feed-data"
 import { useMemo, useState } from "react"
 
+// Full category list for the feed header and bottom dock. Order is
+// editorial: the most-browsed verticals appear first, with niche
+// sections ("История", "Барахолка") lower in the strip. The bottom
+// dock scrolls horizontally so long labels on mobile never clip.
 const categories = [
   { id: "all", label: "Всё" },
   { id: "infra", label: "Инфраструктура" },
   { id: "culture", label: "Культура" },
   { id: "evening", label: "Вечер" },
+  { id: "food", label: "Еда" },
+  { id: "sport", label: "Спорт" },
+  { id: "nature", label: "Природа" },
+  { id: "transport", label: "Транспорт" },
+  { id: "tech", label: "Технологии" },
+  { id: "market", label: "Барахолка" },
+  { id: "kids", label: "Дети" },
+  { id: "history", label: "История" },
   { id: "books", label: "Книги" },
 ] as const
 
@@ -29,7 +41,10 @@ type CategoryId = (typeof categories)[number]["id"]
 export default function FeedPage() {
   const [active, setActive] = useState<CategoryId>("all")
   // Deterministic generation — SSR and client render identical content.
-  const items = useMemo(() => generateFeedItems(36), [])
+  // Count is tuned so each of the ~13 categories gets several posts when
+  // filtered: we cycle through 22 templates, so 72 slots yields ≈3 posts
+  // per vertical plus the two planted promos.
+  const items = useMemo(() => generateFeedItems(72), [])
 
   const visible: FeedItem[] = useMemo(() => {
     const cat: FeedCategory | "all" = active
@@ -86,12 +101,22 @@ export default function FeedPage() {
         className="mx-auto flex w-full max-w-[1300px] gap-0 pb-28 sm:gap-5 sm:px-4 sm:pb-32 md:gap-6 md:pb-10 lg:px-6 xl:gap-8"
       >
         {/*
-          Left rail — only from lg up. The sticky top offset sits just
-          below the header (title row + chip strip) plus 12px of breathing
-          room so panels don't clip against the header's bottom edge when
-          scrolling.
+          Left rail — only from xl up (desktop). The aside levitates with
+          generous horizontal padding (`px-6`) so the profile badge's
+          amber glow shadow breathes in every direction without being
+          sliced by the scroll container. Only the top + bottom of the
+          content fades out via `mask-image` so scrolling melts into
+          the page edges; the sides stay opaque and fully visible.
         */}
-        <aside className="sticky top-[132px] hidden h-[calc(100dvh-148px)] w-[230px] shrink-0 self-start overflow-y-auto pr-1 lg:block xl:w-[250px] scrollbar-feed">
+        <aside
+          className="sticky top-[124px] hidden h-[calc(100dvh-140px)] w-[280px] shrink-0 self-start overflow-y-auto px-6 pb-8 pt-5 xl:block xl:w-[300px] scrollbar-none"
+          style={{
+            WebkitMaskImage:
+              "linear-gradient(to bottom, transparent 0, black 24px, black calc(100% - 32px), transparent 100%)",
+            maskImage:
+              "linear-gradient(to bottom, transparent 0, black 24px, black calc(100% - 32px), transparent 100%)",
+          }}
+        >
           <FeedSideLeft />
         </aside>
 
@@ -128,10 +153,23 @@ export default function FeedPage() {
           )}
         </main>
 
-        {/* Right rail — shown from md up. Uses the always-visible thin
-            grey scrollbar so the widgets don't slide under a transparent
-            track when overflowing. */}
-        <aside className="sticky top-[124px] hidden h-[calc(100dvh-140px)] w-[260px] shrink-0 self-start overflow-y-auto pl-1 md:block md:top-[118px] lg:top-[132px] lg:h-[calc(100dvh-148px)] lg:w-[280px] xl:w-[320px] scrollbar-feed">
+        {/* Right rail — shown from xl up (desktop). Reaches a touch
+            higher (top-[112px]) and all the way down to the viewport
+            bottom so the column never shows an empty bleed. Both the
+            top and the bottom edges fade out via a soft `mask-image`
+            gradient so content dissolves into the page on either side
+            of the sticky container — matching the left rail's
+            treatment. Scrollbar is fully hidden; the column still
+            scrolls via wheel / trackpad / touch. */}
+        <aside
+          className="sticky top-[112px] hidden h-[calc(100dvh-112px)] w-[296px] shrink-0 self-start overflow-y-auto px-4 pb-10 pt-6 xl:block xl:w-[336px] scrollbar-none"
+          style={{
+            WebkitMaskImage:
+              "linear-gradient(to bottom, transparent 0, black 28px, black calc(100% - 36px), transparent 100%)",
+            maskImage:
+              "linear-gradient(to bottom, transparent 0, black 28px, black calc(100% - 36px), transparent 100%)",
+          }}
+        >
           <FeedSideRight />
         </aside>
       </div>

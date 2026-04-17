@@ -100,13 +100,13 @@ export function FeedHeader<T extends Category>({
         </div>
       </div>
 
-      {/* Category tabs — only shown from md up. On mobile and small-tablet
-          sizes the chips are replaced by a floating FeedBottomDock, so
-          switching categories stays thumb-reachable while scrolling and
+      {/* Category tabs — only shown from xl up (desktop). On mobile and
+          tablet sizes the chips are replaced by a floating FeedBottomDock,
+          so switching categories stays thumb-reachable while scrolling and
           doesn't compete with the sticky header height. */}
       <nav
         aria-label="Рубрики"
-        className="scrollbar-none mx-auto hidden w-full max-w-[1300px] items-center gap-1.5 overflow-x-auto px-4 pb-2.5 sm:px-5 md:flex md:gap-2 lg:px-6"
+        className="scrollbar-none mx-auto hidden w-full max-w-[1300px] items-center gap-1.5 overflow-x-auto px-4 pb-2.5 sm:px-5 lg:px-6 xl:flex xl:gap-2"
       >
         {categories.map((c) => {
           const isActive = c.id === active

@@ -56,39 +56,39 @@ const features = [
     icon: Heart,
     title: "Умный подбор",
     description:
-      "Алгоритм анализирует интересы, ценности и образ жизни — предлагает только тех, с кем действительно совпадаешь.",
+      `Алгоритм анализирует интересы, ценности и образ жизни — предлагает только тех, с кем действительно совпадаешь.`,
   },
   {
     icon: Shield,
     title: "Верификация профилей",
     description:
-      "Проверка по фото и документам. Никаких ботов, фейков и пустых анкет — только реальные люди.",
+      `Проверка по фото и документам. Никаких ботов, фейков и пустых анкет — только реальные люди.`,
   },
   {
     icon: MessageCircle,
     title: "Живое общение",
     description:
-      "Современный мессенджер: голосовые, видео, фото, стикеры. Всё, чтобы разговор был настоящим.",
+      `Современный мессенджер: голосовые, видео, фото, стикеры. Все, чтобы разговор был настоящим.`,
   },
   {
     icon: Zap,
     title: "Мгновенные матчи",
     description:
-      "Первое совпадение — в среднем через 3 минуты после регистрации. Без ожиданий и пустых свайпов.",
+      `Первое совпадение — в среднем через 3 минуты после регистрации. Без ожиданий и пустых свайпов.`,
   },
   {
     icon: Lock,
     title: "Приватность",
     description:
-      "Ты сам решаешь, кто видит твой профиль. Режим инкогнито и сквозное шифрование переписки.",
+      `Ты сам решаешь, кто видит твой профиль. Режим инкогнито и сквозное шифрование переписки.`,
   },
   {
     icon: Flame,
-    title: "Серьёзные отношения",
+    title: "Серьезные отношения",
     description:
-      "Амур — для тех, кто ищет не флирт на вечер, а человека на всю жизнь. И находит.",
+      `Амур — для тех, кто ищет не флирт на вечер, а человека на всю жизнь. И находит.`,
   },
-]
+] as const
 
 const stats = [
   { value: "50K+", label: "Счастливых пар" },
@@ -185,6 +185,11 @@ export default function LandingPage() {
             <Link
               href="/auth?l=0"
               className="group inline-flex items-center gap-1.5 rounded-full bg-[#2a1418] px-4 py-2 text-sm font-medium text-white transition-all hover:bg-[#2a1418]/90"
+              style={{
+                textShadow: "0 1px 1px rgba(0, 0, 0, 0.35)",
+                boxShadow:
+                  "0 6px 14px -4px rgba(42, 20, 24, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -1px 0 rgba(0, 0, 0, 0.25)",
+              }}
             >
               Начать
               <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
@@ -222,6 +227,11 @@ export default function LandingPage() {
             <Link
               href="/auth?l=0"
               className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#2a1418] px-6 py-3 text-sm font-medium text-white transition-all hover:bg-[#2a1418]/90 sm:w-auto"
+              style={{
+                textShadow: "0 1px 1px rgba(0, 0, 0, 0.4)",
+                boxShadow:
+                  "0 10px 24px -8px rgba(42, 20, 24, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 -2px 2px rgba(0, 0, 0, 0.25)",
+              }}
             >
               Начать бесплатно
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -229,6 +239,10 @@ export default function LandingPage() {
             <a
               href="#stories"
               className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#2a1418]/10 bg-white/60 px-6 py-3 text-sm font-medium text-[#2a1418] backdrop-blur-sm transition-colors hover:bg-white sm:w-auto"
+              style={{
+                boxShadow:
+                  "0 6px 16px -6px rgba(42, 20, 24, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 0 rgba(42, 20, 24, 0.06)",
+              }}
             >
               Смотреть истории
             </a>
@@ -464,6 +478,11 @@ export default function LandingPage() {
                 <Link
                   href="/auth?l=0"
                   className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#2a1418] px-7 py-3.5 text-sm font-medium text-white transition-all hover:bg-[#2a1418]/90 sm:w-auto"
+                  style={{
+                    textShadow: "0 1px 1px rgba(0, 0, 0, 0.4)",
+                    boxShadow:
+                      "0 12px 28px -10px rgba(42, 20, 24, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 -2px 2px rgba(0, 0, 0, 0.25)",
+                  }}
                 >
                   Создать профиль
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -471,6 +490,10 @@ export default function LandingPage() {
                 <Link
                   href="/auth?l=1"
                   className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#2a1418]/15 bg-white/80 px-7 py-3.5 text-sm font-medium text-[#2a1418] backdrop-blur-sm transition-colors hover:bg-white sm:w-auto"
+                  style={{
+                    boxShadow:
+                      "0 6px 16px -6px rgba(42, 20, 24, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(42, 20, 24, 0.06)",
+                  }}
                 >
                   Войти
                 </Link>

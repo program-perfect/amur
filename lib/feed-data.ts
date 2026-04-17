@@ -16,7 +16,19 @@
  *    the paid АРТЛЕНТА+ tier.
  */
 
-export type FeedCategory = "infra" | "culture" | "evening" | "books"
+export type FeedCategory =
+  | "infra"
+  | "culture"
+  | "evening"
+  | "books"
+  | "food"
+  | "sport"
+  | "nature"
+  | "transport"
+  | "tech"
+  | "market"
+  | "kids"
+  | "history"
 
 export type FeedReactionKey =
   | "like"
@@ -165,6 +177,206 @@ const templates: Template[] = [
     },
     buzz: 0.75,
   },
+  // ── Expanded editorial coverage ───────────────────────────────────
+  // New verticals added to widen the feed: food, sport, nature,
+  // transport, tech, market, kids, history. Each template carries a
+  // plausible Artemyevsk-local hook so the feed reads as a coherent
+  // city newsroom rather than a generic lifestyle stream.
+  {
+    group: "Артемьевск / еда",
+    handle: "arthub.food",
+    monogram: "АЕ",
+    avatarHue: 10,
+    category: "food",
+    location: "Старый рынок",
+    text: "На Старом рынке в субботу открыли ряд фермерских прилавков с сезонным урожаем. На стойках — корнеплоды, соленья, пасеки из пригородов. Очередь к сыроделам растянулась почти до входа.",
+    image: {
+      src: "/feed/market-stalls.jpg",
+      alt: "Фермерские прилавки Старого рынка Артемьевска",
+      aspect: "3/2",
+    },
+    buzz: 0.7,
+  },
+  {
+    group: "Кафе «Перелив»",
+    handle: "pereliv.cafe",
+    monogram: "П",
+    avatarHue: 40,
+    category: "food",
+    location: "Улица Садовая, 14",
+    text: "Новое зимнее меню выкатили без анонса: тыквенный крем-суп, форель на подушке из чечевицы и пряный компот из облепихи. Порции скромные, подача аккуратная — место быстро заполняется по вечерам.",
+    buzz: 0.5,
+  },
+  {
+    group: "Артемьевск / спорт",
+    handle: "sport.art",
+    monogram: "АС",
+    avatarHue: 200,
+    category: "sport",
+    location: "Стадион «Заря»",
+    text: "Юношеская команда выиграла полуфинал областного первенства в дополнительное время. На трибунах собрались родители и соседние школы, поле держалось достойно даже под мокрым снегом.",
+    image: {
+      src: "/feed/stadium.jpg",
+      alt: "Матч юношеской команды на стадионе Заря",
+      aspect: "3/2",
+    },
+    buzz: 0.8,
+  },
+  {
+    group: "Беговой клуб «Поток»",
+    handle: "potok.run",
+    monogram: "ПК",
+    avatarHue: 180,
+    category: "sport",
+    location: "Парк у реки",
+    text: "В воскресенье стартует еженедельная дистанция 5 км вдоль реки. Темп свободный, после финиша — горячий чай и разбор техники с тренером. Регистрации не нужно, достаточно просто прийти к 9:00.",
+    buzz: 0.45,
+  },
+  {
+    group: "Природа Артемьевска",
+    handle: "priroda.art",
+    monogram: "ПА",
+    avatarHue: 130,
+    category: "nature",
+    location: "Сосновый бор за городом",
+    text: "В сосновом бору за городом второй раз за месяц замечена пара журавлей. Лесники просят не подходить ближе тридцати метров и не использовать приманки — площадка стала частью сезонного маршрута.",
+    image: {
+      src: "/feed/forest.jpg",
+      alt: "Сосновый бор на рассвете",
+      aspect: "4/5",
+    },
+    buzz: 0.6,
+  },
+  {
+    group: "Городские птицы",
+    handle: "ptitsy.city",
+    monogram: "ГП",
+    avatarHue: 160,
+    category: "nature",
+    location: "Пруд в Лесопарке",
+    text: "На пруду в Лесопарке задержались поздние утки — вода ещё не схватилась льдом. Волонтёры просят не подкармливать хлебом: в пунктах у входа лежит подходящий корм в бумажных пакетах.",
+    buzz: 0.35,
+  },
+  {
+    group: "Транспорт Артемьевска",
+    handle: "transport.art",
+    monogram: "ТА",
+    avatarHue: 280,
+    category: "transport",
+    location: "Маршрут №12",
+    text: "На маршруте №12 ввели новое расписание: интервал в час пик сокращён до 7–9 минут. На конечных установили табло с обратным отсчётом. Частично обновили подвижной состав — три машины новые.",
+    image: {
+      src: "/feed/bus.jpg",
+      alt: "Новый автобус на конечной остановке маршрута 12",
+      aspect: "3/2",
+    },
+    buzz: 0.65,
+  },
+  {
+    group: "Веломаршрут 64",
+    handle: "velo64",
+    monogram: "В",
+    avatarHue: 100,
+    category: "transport",
+    location: "Улица Октябрьская",
+    text: "Разметку велополосы на Октябрьской доводят до финала: поставили отбойники у сложных поворотов, обновили знаки. Полоса пока тестовая, обратная связь собирается через форму на сайте мэрии.",
+    buzz: 0.4,
+  },
+  {
+    group: "Техцех",
+    handle: "techceh",
+    monogram: "ТЦ",
+    avatarHue: 250,
+    category: "tech",
+    location: "Коворкинг «Сетка»",
+    text: "В коворкинге «Сетка» прошёл первый митап инженеров из локальных студий. Доклады без слайдов, по 15 минут: рассказывали о своих пет-проектах, отвечали на вопросы. Следующий — через две недели.",
+    buzz: 0.5,
+  },
+  {
+    group: "Цифровая мэрия",
+    handle: "gov.digital",
+    monogram: "ЦМ",
+    avatarHue: 230,
+    category: "tech",
+    location: "Портал услуг",
+    text: "Портал городских услуг обновили: заявки на вывоз крупногабаритного мусора и ремонт дворовых участков теперь подаются в пару кликов. История обращений видна прямо в личном кабинете.",
+    buzz: 0.55,
+  },
+  {
+    group: "Артемьевск / барахолка",
+    handle: "art.market",
+    monogram: "АМ",
+    avatarHue: 320,
+    category: "market",
+    location: "Площадь Искусств",
+    text: "В выходные на Площади Искусств пройдёт сезонная барахолка: винтажные книги, пластинки, старая оптика, керамика. Вход свободный, около сотни продавцов заявились заранее.",
+    image: {
+      src: "/feed/flea-market.jpg",
+      alt: "Столы с винтажными вещами на барахолке",
+      aspect: "4/5",
+    },
+    buzz: 0.7,
+  },
+  {
+    group: "Мастерская на Чехова",
+    handle: "master.chehova",
+    monogram: "МЧ",
+    avatarHue: 50,
+    category: "market",
+    location: "Улица Чехова, 7",
+    text: "Мастерская на Чехова открыла короткий курс по починке кожаных изделий. Три встречи по вечерам, материалы и инструменты на месте. Набор в группу идёт до конца недели.",
+    buzz: 0.35,
+  },
+  {
+    group: "Дети Артемьевска",
+    handle: "deti.art",
+    monogram: "ДА",
+    avatarHue: 345,
+    category: "kids",
+    location: "Центр «Ромашка»",
+    text: "В центре «Ромашка» стартует бесплатный цикл лекций для родителей младших школьников. Темы — адаптация, сон, экранное время. Записываться можно через администратора или мессенджер центра.",
+    buzz: 0.4,
+  },
+  {
+    group: "Детская площадка на Зелёной",
+    handle: "zel.park",
+    monogram: "ДЗ",
+    avatarHue: 120,
+    category: "kids",
+    location: "Улица Зелёная",
+    text: "На детской площадке в сквере на Зелёной заменили песок и починили качели. Новое покрытие — мягкая резиновая крошка, от старой гравийной насыпи отказались полностью.",
+    image: {
+      src: "/feed/playground.jpg",
+      alt: "Обновлённая детская площадка на улице Зелёной",
+      aspect: "3/2",
+    },
+    buzz: 0.5,
+  },
+  {
+    group: "Артемьевск / история",
+    handle: "art.history",
+    monogram: "АИ",
+    avatarHue: 15,
+    category: "history",
+    location: "Краеведческий музей",
+    text: "В краеведческом музее выложили оцифрованный фонд фотографий начала XX века: ярмарки, мастерские, городские праздники. Коллекция доступна онлайн, с возможностью скачивать изображения в высоком разрешении.",
+    image: {
+      src: "/feed/archive.jpg",
+      alt: "Архивные фотографии начала XX века",
+      aspect: "4/5",
+    },
+    buzz: 0.6,
+  },
+  {
+    group: "Клуб «Старый город»",
+    handle: "stary.gorod",
+    monogram: "СГ",
+    avatarHue: 20,
+    category: "history",
+    location: "Улица Толстого",
+    text: "Экскурсия по старому центру: маршрут от пожарной каланчи до бывшей почтовой станции. Группы по 10–12 человек, сбор у фонаря на Толстого. В программе — неизвестные широкой публике дворы и арки.",
+    buzz: 0.45,
+  },
 ]
 
 /** Relative timestamps cycled across the feed so each post has its own
@@ -192,6 +404,14 @@ function pickTopReaction(
     culture: ["like", "haha", "wow", "fire"],
     evening: ["fire", "wow", "like", "fire"],
     books: ["like", "wow", "like", "fire"],
+    food: ["like", "fire", "wow", "like"],
+    sport: ["fire", "like", "wow", "fire"],
+    nature: ["wow", "like", "fire", "wow"],
+    transport: ["like", "angry", "wow", "like"],
+    tech: ["wow", "fire", "like", "wow"],
+    market: ["like", "fire", "like", "wow"],
+    kids: ["like", "haha", "wow", "like"],
+    history: ["wow", "like", "fire", "wow"],
   }
   const options = wheel[category]
   return options[index % options.length]
@@ -265,58 +485,37 @@ function makePost(i: number): FeedPostData {
 }
 
 /**
- * Produce `count` mixed feed items: posts interleaved with occasional
- * sponsored cards. Deterministic — no randomness, safe for SSR
- * hydration.
+ * Produce `count` mixed feed items: posts interleaved with exactly two
+ * sponsored cards — one of each kind. Deterministic — no randomness,
+ * safe for SSR hydration.
  *
- * Promo cadence is deliberately front-loaded and then tapers into the
- * middle of the feed, mirroring how real editorial feeds work: ads are
- * more aggressive up top (when attention is highest) and thin out as
- * readers scroll deeper.
+ * The feed contains only two ads total to keep sponsored content from
+ * feeling intrusive:
+ *   - АртЛента+ self-promo appears near the start of the feed
+ *   - Амур cross-promo appears around the middle of the feed
  *
- * For the first 36 slots the planted positions are:
- *   АртЛента+ :  slot 2, 7, 15, 26
- *   Амур      :  slot 4, 11, 19, 31
- *
- * That yields ~8 promos across 36 items, with 5 of them in the first 20
- * slots (dense start), 2 around the middle, and 1 deeper. For larger
- * counts the pattern repeats every 36 slots so the density pattern is
- * preserved however far the reader scrolls.
+ * Ads are kept at least 4 posts apart from each other so readers get
+ * several pieces of editorial content between the two placements.
  */
-const ARTLENTA_PROMO_OFFSETS = [2, 7, 15, 26] as const
-const AMUR_PROMO_OFFSETS = [4, 11, 19, 31] as const
-const PROMO_CYCLE = 36
+const ARTLENTA_PROMO_SLOT = 3
+const AMUR_PROMO_SLOT = 15
 
 export function generateFeedItems(count: number): FeedItem[] {
-  const artlentaSlots = new Set<number>()
-  const amurSlots = new Set<number>()
-  for (let cycle = 0; cycle * PROMO_CYCLE < count; cycle++) {
-    const base = cycle * PROMO_CYCLE
-    ARTLENTA_PROMO_OFFSETS.forEach((o) => artlentaSlots.add(base + o))
-    AMUR_PROMO_OFFSETS.forEach((o) => amurSlots.add(base + o))
-  }
-
   const out: FeedItem[] = []
   let postIdx = 0
-  let lastKind: "post" | "promo" = "post"
 
   for (let slot = 0; slot < count; slot++) {
-    const isArtlentaPromo = artlentaSlots.has(slot)
-    const isAmurPromo = !isArtlentaPromo && amurSlots.has(slot)
-
-    if ((isArtlentaPromo || isAmurPromo) && lastKind !== "promo") {
-      if (isArtlentaPromo) {
-        out.push({ kind: "promo-artlenta", id: `promo-al-${slot}` })
-      } else {
-        out.push({ kind: "promo-amur", id: `promo-amur-${slot}` })
-      }
-      lastKind = "promo"
+    if (slot === ARTLENTA_PROMO_SLOT) {
+      out.push({ kind: "promo-artlenta", id: `promo-al-${slot}` })
+      continue
+    }
+    if (slot === AMUR_PROMO_SLOT) {
+      out.push({ kind: "promo-amur", id: `promo-amur-${slot}` })
       continue
     }
 
     out.push({ kind: "post", data: makePost(postIdx) })
     postIdx++
-    lastKind = "post"
   }
 
   return out
