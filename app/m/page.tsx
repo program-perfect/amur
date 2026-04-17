@@ -4,6 +4,10 @@ import { BottomDock } from "@/components/amur/bottom-dock"
 import { ChatView } from "@/components/amur/chat-view"
 import { ConversationsList } from "@/components/amur/conversations-list"
 import { LeftNav } from "@/components/amur/left-nav"
+import {
+  NotificationTimerDialog,
+  useNotificationDialog,
+} from "@/components/amur/notification-timer-dialog"
 import { ProfilePanel } from "@/components/amur/profile-panel"
 import { ProfileSheet } from "@/components/amur/profile-sheet"
 import {
@@ -12,8 +16,21 @@ import {
   type Message,
   type ScriptStep,
 } from "@/lib/amur-data"
+import { getConversationId, getChatId } from "@/lib/chat-ids"
 import { cn } from "@/lib/utils"
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useSearchParams } from "next/navigation"
+
+function MessengerPageLoader() {
+  return (
+    <div className="flex h-dvh w-full items-center justify-center bg-sidebar">
+      <div className="flex flex-col items-center gap-4">
+        <div className="h-12 w-12 animate-pulse rounded-full bg-primary/20" />
+        <span className="text-sm text-muted-foreground">Загрузка...</span>
+      </div>
+    </div>
+  )
+}
 
 type ConvState = {
   messages: Message[]
@@ -156,7 +173,30 @@ function previewOf(step: ScriptStep, mine: boolean): string {
 }
 
 export default function Page() {
-  const [activeId, setActiveId] = useState<string>(seed[0].id)
+  return (
+    <Suspense fallback={<MessengerPageLoader />}>
+      <MessengerPage />
+    </Suspense>
+  )
+}
+
+function MessengerPage() {
+  const searchParams = useSearchParams()
+  const notificationDialog = useNotificationDialog()
+
+  // Resolve initial active conversation from URL or default to first
+  const getInitialActiveId = useCallback(() => {
+    const chatIdParam = searchParams.get("chat")
+    if (chatIdParam) {
+      const conversationId = getConversationId(chatIdParam)
+      if (conversationId && seed.some((c) => c.id === conversationId)) {
+        return conversationId
+      }
+    }
+    return seed[0].id
+  }, [searchParams])
+
+  const [activeId, setActiveId] = useState<string>(() => getInitialActiveId())
   const [state, setState] = useState<Record<string, ConvState>>(
     () => buildInitialState(),
   )
@@ -219,6 +259,13 @@ export default function Page() {
 
   const handleSelect = useCallback((id: string) => {
     setActiveId(id)
+    // Update URL with the chat ID for shareable links
+    const chatId = getChatId(id)
+    if (chatId) {
+      const url = new URL(window.location.href)
+      url.searchParams.set("chat", chatId)
+      window.history.replaceState({}, "", url.toString())
+    }
     // On mobile, opening a conversation switches the single-pane view
     // to the chat. On md+ this has no visual effect (CSS handles layout).
     setMobileView("chat")
@@ -565,7 +612,7 @@ export default function Page() {
   return (
     <main className="relative flex h-dvh w-full overflow-hidden bg-sidebar">
       {/* Desktop vertical left nav (xl+) */}
-      <LeftNav />
+      <LeftNav onOpenNotifications={notificationDialog.open} />
 
       <div className="flex min-w-0 flex-1 gap-2 p-2 md:gap-3 md:p-3">
         {/* Main messenger card — conversations + chat as one rounded surface */}
@@ -633,6 +680,12 @@ export default function Page() {
         On tablet (md..xl) it stays visible regardless.
       */}
       <BottomDock hidden={mobileView === "chat"} />
+
+      {/* Notification timer setup dialog */}
+      <NotificationTimerDialog
+        open={notificationDialog.isOpen}
+        onClose={notificationDialog.close}
+      />
     </main>
   )
 }

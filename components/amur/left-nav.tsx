@@ -1,7 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/utils"
-import { Compass, Flame, Heart, MessageCircle, PanelLeftClose, PanelLeftOpen, Settings, Sparkles } from "lucide-react"
+import { Bell, Compass, Flame, Heart, MessageCircle, PanelLeftClose, PanelLeftOpen, Settings, Sparkles } from "lucide-react"
 import Image from "next/image"
 import Link from 'next/link'
 import { useState } from "react"
@@ -14,7 +14,11 @@ const items = [
   { icon: Sparkles, label: "Амур+", key: "premium" },
 ]
 
-export function LeftNav() {
+interface LeftNavProps {
+  onOpenNotifications?: () => void
+}
+
+export function LeftNav({ onOpenNotifications }: LeftNavProps) {
   const [expanded, setExpanded] = useState(false)
 
   return (
@@ -128,6 +132,20 @@ export function LeftNav() {
       </div>
 
       <div className={cn("flex flex-col gap-3", expanded ? "items-stretch px-4" : "items-center")}>
+        <button
+          type="button"
+          aria-label="Уведомления"
+          onClick={onOpenNotifications}
+          className={cn(
+            "cursor-pointer flex h-11 items-center rounded-full text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground",
+            expanded ? "w-full justify-start gap-3 px-3" : "w-11 justify-center",
+          )}
+        >
+          <Bell className="h-4.5 w-4.5 shrink-0" strokeWidth={1.6} />
+          {expanded && (
+            <span className="truncate text-sm font-normal tracking-tight text-foreground/80">Уведомления</span>
+          )}
+        </button>
         <button
           type="button"
           aria-label="Настройки"

@@ -342,7 +342,10 @@ export function ChatView({
               onChange={(e) => setValue(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={`Напишите ${conversation.nameDative}…`}
-              className="max-h-45 min-h-9 flex-1 resize-none bg-transparent px-2 py-1.5 text-[15px] leading-relaxed text-foreground placeholder:text-muted-foreground focus:outline-none scrollbar-thin"
+              className={cn(
+                "max-h-45 min-h-9 flex-1 resize-none bg-transparent px-2 py-1.5 text-[15px] leading-relaxed text-foreground placeholder:text-muted-foreground focus:outline-none",
+                isMultiline ? "overflow-y-auto scrollbar-thin" : "overflow-hidden"
+              )}
             />
 
             {value.trim().length === 0 ? (
