@@ -19,9 +19,10 @@ import Image from "next/image"
 import Link from "next/link"
 
 const photos = [
-  "/profiles/user-me.png",
-  "/profiles/me-1.jpg",
-  "/profiles/me-2.jpg",
+  "/profiles/tata-1.jpg",
+  "/profiles/tata-2.jpg",
+  "/profiles/tata-3.jpg",
+  "/profiles/tata-4.jpg",
 ]
 
 const facts = [
@@ -41,8 +42,8 @@ const interests = [
 ]
 
 const stats = [
-  { label: "Симпатии", value: "3" },
-  { label: "Совпадения", value: "3" },
+  { label: "Симпатии", value: "13" },
+  { label: "Совпадения", value: "7" },
   { label: "Рейтинг", value: "5.0" },
 ]
 
@@ -92,16 +93,16 @@ export default function ProfilePage() {
         <div className="grid gap-8 lg:grid-cols-[400px_1fr]">
           {/* Left: Hero photo card */}
           <div className="lg:sticky lg:top-24 lg:self-start">
-            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-[0_1px_2px_rgba(120,50,20,0.04),0_20px_50px_-18px_rgba(120,50,20,0.25)] ring-1 ring-border">
+            <div className="relative aspect-4/5 w-full overflow-hidden rounded-3xl shadow-[0_1px_2px_rgba(120,50,20,0.04),0_20px_50px_-18px_rgba(120,50,20,0.25)] ring-1 ring-border">
               <Image
                 src={photos[0] || "/placeholder.svg"}
-                alt="Анастасия"
+                alt="Аватар"
                 fill
                 sizes="400px"
                 priority
                 className="object-cover"
               />
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-foreground/75 via-foreground/10 to-transparent" />
+              <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-foreground/75 via-foreground/10 to-transparent" />
 
               {/* Verified badge */}
               <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-background/85 px-2.5 py-1 text-[11px] font-medium text-primary backdrop-blur-sm">
@@ -112,8 +113,8 @@ export default function ProfilePage() {
               {/* Name overlay */}
               <div className="absolute bottom-0 left-0 right-0 p-6 text-background">
                 <h1 className="font-serif text-5xl leading-none tracking-tight">
-                  Маша,{" "}
-                  <span className="font-sans text-4xl font-light">26</span>
+                  Татьяна,{" "}
+                  <span className="font-sans text-4xl font-light">33</span>
                 </h1>
                 <div className="mt-3 flex items-center gap-1.5 text-[13px] text-background/85">
                   <MapPin className="h-3.5 w-3.5" strokeWidth={1.8} />
@@ -142,7 +143,7 @@ export default function ProfilePage() {
             {/* Premium CTA */}
             <Link
               href="#"
-              className="mt-4 flex items-center justify-between gap-3 rounded-2xl bg-gradient-to-br from-[#2a1418] to-[#4a1e24] px-5 py-4 text-background shadow-sm transition-transform hover:scale-[1.01]"
+              className="mt-4 flex items-center justify-between gap-3 rounded-2xl bg-linear-to-br from-[#2a1418] to-[#4a1e24] px-5 py-4 text-background shadow-sm transition-transform hover:scale-[1.01]"
             >
               <div className="flex items-center gap-3">
                 <span className="flex h-10 w-10 items-center justify-center rounded-full bg-background/10 backdrop-blur-sm">
@@ -166,7 +167,7 @@ export default function ProfilePage() {
             <section>
               <SectionTitle>О себе</SectionTitle>
               <p className="text-[15px] leading-relaxed text-foreground/85">
-                Ценю красоту, вкус и уважение. Люблю когда мужчина умеет держать себя.
+                Ищу серьёзные отношения и создание крепкой семьи. Люблю литературу, хорошие книги и долгие разговоры под вечер. Верю, что настоящая любовь существует.
               </p>
             </section>
 
@@ -235,7 +236,7 @@ export default function ProfilePage() {
                 {photos.slice(1).map((src, i) => (
                   <div
                     key={src}
-                    className="group relative aspect-[3/4] overflow-hidden rounded-2xl ring-1 ring-border"
+                    className="group relative aspect-3/4 overflow-hidden rounded-2xl ring-1 ring-border"
                   >
                     <Image
                       src={src || "/placeholder.svg"}
@@ -249,7 +250,7 @@ export default function ProfilePage() {
                 <button
                   type="button"
                   aria-label="Добавить фото"
-                  className="group flex aspect-[3/4] cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border bg-card/50 text-muted-foreground transition-colors hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
+                  className="group flex aspect-3/4 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border bg-card/50 text-muted-foreground transition-colors hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
                 >
                   <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 transition-colors group-hover:bg-primary/20">
                     <Camera className="h-5 w-5" strokeWidth={1.6} />

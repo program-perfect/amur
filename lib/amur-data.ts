@@ -105,7 +105,7 @@ export const conversations: Conversation[] = [
     photos: ["/profiles/maestro.png"],
     online: true,
     status: "В сети · отвечает быстро",
-    verified: false,
+    verified: true,
     city: "Артемьевск",
     distance: "3 км",
     compatibility: 96,
@@ -225,6 +225,39 @@ export const conversations: Conversation[] = [
 
   {
     id: "c4",
+    name: "Влад",
+    nameDative: "Владиславу",
+    age: 29,
+    avatar: "/profiles/match-5.jpg",
+    photos: ["/profiles/match-5.jpg"],
+    online: false,
+    status: "В сети",
+    verified: true,
+    city: "Артемьевск",
+    distance: "2,5 км",
+    compatibility: 89,
+    about: "",
+    facts: [{ icon: MapPin, label: "Артемьевск · 2,5 км от вас" }],
+    interests: [
+      { label: "Путешествия", icon: Plane },
+      { label: "Рестораны", icon: Utensils },
+      { label: "Театр", icon: Drama },
+    ],
+    matchedLabel: "Вы совпали 2 недели назад",
+    preview: {
+      lastMessage: "Вы совпали недели назад",
+      time: "—",
+    },
+    suggestion: "Привет!) Как дела?",
+    script: [
+      // TODO:
+      // В приложенном фрагменте сценария нет пригодимой чат-переписки Лёлика
+      // прямыми цитатами. Текущие реплики нужно не выдумывать, а брать из сцен.
+    ],
+  },
+
+  {
+    id: "c5",
     name: "Макс",
     nameDative: "Максу",
     age: 28,

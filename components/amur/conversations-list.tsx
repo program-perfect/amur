@@ -133,7 +133,7 @@ function CompactView({
                   )}
                 />
                 {preview.unread ? (
-                  <span className="cursor-pointer absolute -right-1 -top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-medium leading-none text-primary-foreground tabular-nums shadow-sm ring-2 ring-sidebar">
+                  <span className="cursor-pointer absolute -right-1 -top-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-medium leading-none text-primary-foreground tabular-nums shadow-sm ring-2 ring-sidebar">
                     {preview.unread}
                   </span>
                 ) : null}
@@ -213,7 +213,7 @@ function ExpandedView({
                   <span className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full bg-accent ring-2 ring-sidebar" />
                 )}
               </div>
-              <span className="max-w-[60px] truncate text-[11px] text-foreground/80">
+              <span className="max-w-15 truncate text-[11px] text-foreground/80">
                 {m.name}
               </span>
             </button>
@@ -311,7 +311,7 @@ function ExpandedView({
                           : preview.lastMessage}
                       </span>
                       {preview.unread ? (
-                        <span className="ml-auto flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-medium leading-none text-primary-foreground tabular-nums">
+                        <span className="ml-auto flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-medium leading-none text-primary-foreground tabular-nums">
                           {preview.unread}
                         </span>
                       ) : null}

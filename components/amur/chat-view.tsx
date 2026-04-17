@@ -128,7 +128,7 @@ export function ChatView({
               aria-label="Назад к диалогам"
               className="cursor-pointer -ml-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground md:hidden"
             >
-              <ChevronLeft className="h-[20px] w-[20px]" strokeWidth={1.8} />
+              <ChevronLeft className="h-5 w-5" strokeWidth={1.8} />
             </button>
           )}
           <button
@@ -150,7 +150,7 @@ export function ChatView({
               <span
                 aria-hidden
                 className={cn(
-                  "absolute bottom-0 right-0 h-[11px] w-[11px] rounded-full ring-2 ring-background transition-all duration-300 ease-out",
+                  "absolute bottom-0 right-0 h-2.75 w-2.75 rounded-full ring-2 ring-background transition-all duration-300 ease-out",
                   online
                     ? "scale-100 bg-accent opacity-100"
                     : "scale-0 bg-accent opacity-0",
@@ -181,10 +181,10 @@ export function ChatView({
             aria-label="Голосовой звонок"
             className="hidden sm:flex"
           >
-            <Phone className="h-[18px] w-[18px]" strokeWidth={1.6} />
+            <Phone className="h-4.5 w-4.5" strokeWidth={1.6} />
           </IconBtn>
           <IconBtn aria-label="Видеозвонок" className="hidden sm:flex">
-            <Video className="h-[18px] w-[18px]" strokeWidth={1.6} />
+            <Video className="h-4.5 w-4.5" strokeWidth={1.6} />
           </IconBtn>
           {onOpenProfile && (
             <IconBtn
@@ -192,18 +192,18 @@ export function ChatView({
               onClick={onOpenProfile}
               className="xl:hidden"
             >
-              <Info className="h-[18px] w-[18px]" strokeWidth={1.6} />
+              <Info className="h-4.5 w-4.5" strokeWidth={1.6} />
             </IconBtn>
           )}
           <IconBtn aria-label="Ещё">
-            <MoreHorizontal className="h-[18px] w-[18px]" strokeWidth={1.6} />
+            <MoreHorizontal className="h-4.5 w-4.5" strokeWidth={1.6} />
           </IconBtn>
         </div>
       </header>
 
       {/* Messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto scrollbar-thin">
-        <div className="mx-auto flex w-full max-w-[720px] flex-col gap-3 px-4 py-6 md:gap-4 md:px-6 md:py-8 lg:px-8">
+        <div className="mx-auto flex w-full max-w-180 flex-col gap-3 px-4 py-6 md:gap-4 md:px-6 md:py-8 lg:px-8">
           {messages.map((m) => {
             if (m.kind === "system") {
               return (
@@ -241,7 +241,7 @@ export function ChatView({
                   {m.kind === "text" ? (
                     <div
                       className={cn(
-                        "cursor-text whitespace-pre-wrap break-words rounded-3xl px-4 py-2.5 text-[14.5px] leading-relaxed md:text-[15px]",
+                        "cursor-text whitespace-pre-wrap wrap-break-word rounded-3xl px-4 py-2.5 text-[14.5px] leading-relaxed md:text-[15px]",
                         mine
                           ? "rounded-br-md bg-primary text-primary-foreground"
                           : "rounded-bl-md border border-border bg-card text-card-foreground",
@@ -256,7 +256,7 @@ export function ChatView({
                         mine ? "rounded-br-md" : "rounded-bl-md",
                       )}
                     >
-                      <div className="relative aspect-[4/5] w-[220px] md:w-[280px]">
+                      <div className="relative aspect-4/5 w-55 md:w-70">
                         <Image
                           src={m.src || "/placeholder.svg"}
                           alt={m.caption ?? "Изображение"}
@@ -310,8 +310,8 @@ export function ChatView({
           Extra bottom padding lifts the whole block slightly away from
           the bottom edge, leaving breathing room for the hint row.
           On md..xl we keep the larger clearance for the floating dock. */}
-      <div className="border-t border-border px-4 pb-6 pt-4 md:px-6 md:pt-5 md:pb-[84px] lg:px-8 xl:pb-8">
-        <div className="mx-auto w-full max-w-[720px]">
+      <div className="border-t border-border px-4 pb-6 pt-4 md:px-6 md:pt-5 md:pb-21 lg:px-8 xl:pb-8">
+        <div className="mx-auto w-full max-w-180">
           <div
             className={cn(
               "flex items-end gap-1 border border-border bg-card px-2 py-2 shadow-sm transition-[border-color,box-shadow,border-radius] duration-300 ease-out focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/10 md:gap-2 md:px-3",
@@ -325,14 +325,14 @@ export function ChatView({
               aria-label="Эмодзи"
               className="cursor-pointer flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
-              <Smile className="h-[18px] w-[18px]" strokeWidth={1.6} />
+              <Smile className="h-4.5 w-4.5" strokeWidth={1.6} />
             </button>
             <button
               type="button"
               aria-label="Прикрепить изображение"
               className="cursor-pointer hidden h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:flex"
             >
-              <ImageIcon className="h-[18px] w-[18px]" strokeWidth={1.6} />
+              <ImageIcon className="h-4.5 w-4.5" strokeWidth={1.6} />
             </button>
 
             <textarea
@@ -342,7 +342,7 @@ export function ChatView({
               onChange={(e) => setValue(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={`Напишите ${conversation.nameDative}…`}
-              className="max-h-[180px] min-h-[36px] flex-1 resize-none bg-transparent px-2 py-1.5 text-[15px] leading-relaxed text-foreground placeholder:text-muted-foreground focus:outline-none scrollbar-thin"
+              className="max-h-45 min-h-9 flex-1 resize-none bg-transparent px-2 py-1.5 text-[15px] leading-relaxed text-foreground placeholder:text-muted-foreground focus:outline-none scrollbar-thin"
             />
 
             {value.trim().length === 0 ? (
@@ -351,7 +351,7 @@ export function ChatView({
                 aria-label="Голосовое сообщение"
                 className="cursor-pointer flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
-                <Mic className="h-[18px] w-[18px]" strokeWidth={1.6} />
+                <Mic className="h-4.5 w-4.5" strokeWidth={1.6} />
               </button>
             ) : (
               <button
@@ -360,7 +360,7 @@ export function ChatView({
                 aria-label="Отправить"
                 className="cursor-pointer flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-colors hover:bg-primary/90"
               >
-                <Send className="h-[16px] w-[16px]" strokeWidth={1.8} />
+                <Send className="h-4 w-4" strokeWidth={1.8} />
               </button>
             )}
           </div>

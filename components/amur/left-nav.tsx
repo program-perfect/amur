@@ -150,12 +150,12 @@ export function LeftNav() {
             expanded ? "gap-3 rounded-full px-1 py-1 hover:bg-sidebar-accent/60" : "flex-col",
           )}
         >
-          <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-background">
-            <Image src="/profiles/user-me.png" alt="Ваш профиль" fill className="object-cover" sizes="40px" />
+          <div className="relative h-15 w-15 shrink-0 overflow-hidden rounded-full ring-3 ring-background">
+            <Image src="/profiles/tata-1.jpg" alt="Ваш профиль" fill className="object-cover" sizes="40px" />
           </div>
           {expanded && (
             <div className="flex min-w-0 flex-col leading-tight">
-              <span className="truncate text-sm font-semibold text-foreground">Маша</span>
+              <span className="truncate text-sm font-semibold text-foreground">Татьяна</span>
               <span className="truncate text-xs text-muted-foreground">Мой профиль</span>
             </div>
           )}

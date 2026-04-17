@@ -10,9 +10,9 @@ import { Suspense, useRef, useState, type KeyboardEvent } from "react"
 /* ─ Registration scripts ────────────────────────────────────────────────── */
 // Whatever the user types, these appear character by character.
 const REGISTER_SCRIPTS = {
-  name: "Алексей Воронцов",
-  email: "alexey.vorontsov@mail.com",
-  age: "30",
+  name: "Татьяна Спиридонова",
+  email: "tata.spiri@mail.com",
+  age: "33",
   city: "Артемьевск",
   about:
     "Ищу серьёзные отношения и создание крепкой семьи. Люблю литературу, хорошие книги и долгие разговоры под вечер. Верю, что настоящая любовь существует.",
@@ -29,7 +29,7 @@ interface FieldConfig {
 
 const REGISTER_FIELDS: FieldConfig[] = [
   { name: "name", label: "Имя и фамилия", placeholder: "Как вас зовут?", type: "text" },
-  { name: "email", label: "Email", placeholder: "your@email.com", type: "email" },
+  { name: "email", label: "Почта", placeholder: "your@email.com", type: "email" },
   { name: "age", label: "Возраст", placeholder: "Сколько вам лет?", type: "text" },
   { name: "city", label: "Город", placeholder: "Где вы живёте?", type: "text" },
   { name: "about", label: "О себе", placeholder: "Расскажите о себе...", type: "textarea" },
@@ -37,7 +37,7 @@ const REGISTER_FIELDS: FieldConfig[] = [
 
 /* ─ Pre-filled credentials for login mode ──────────────────────────────── */
 const PREFILLED_LOGIN = {
-  email: "alexey.vorontsov@mail.com",
+  email: "tata.spiri@mail.com",
   password: "••••••••••••",
 }
 
@@ -108,7 +108,7 @@ function LoginView() {
             <span className="text-[#2a1418]/80">Вход в Амур</span>
           </div>
           <h1 className="text-4xl font-medium tracking-tight text-balance sm:text-5xl">
-            С возвращением,{" "}<span className="font-serif italic font-normal text-[oklch(0.56_0.2_8)]">Тата</span>!
+            С возвращением,{" "}<span className="font-serif italic text-7xl font-normal text-[oklch(0.56_0.2_8)]">Тата</span>{" "}<span className="italic">!</span>
           </h1>
         </div>
 
@@ -122,7 +122,7 @@ function LoginView() {
                 htmlFor="email"
                 className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-[#2a1418]/50"
               >
-                Email
+                Почта
               </label>
               <div className="relative">
                 <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#2a1418]/30" />
