@@ -1,11 +1,18 @@
 "use client"
 
+import { conversations } from "@/lib/amur-data"
 import { cn } from "@/lib/utils"
-import { Heart, X, Bell } from "lucide-react"
-import { useState, useEffect, useCallback } from "react"
+import { Heart, X } from "lucide-react"
+import Image from "next/image"
+import { useCallback, useEffect, useMemo, useState } from "react"
 
 const STORAGE_KEY = "amur-notification-timer"
 const DISMISSED_KEY = "amur-notification-dismissed"
+const SENDER_KEY = "amur-notification-sender"
+const BODY_KEY = "amur-notification-body"
+
+const DEFAULT_BODY = "У вас новое совпадение!"
+const DEFAULT_SENDER_ID = "c5" // Макс
 
 type TimerOption = {
   label: string
@@ -21,6 +28,33 @@ const timerOptions: TimerOption[] = [
   { label: "2 минуты", value: 120 },
 ]
 
+/**
+ * Lightweight sender descriptor — we only need the three fields the
+ * browser notification actually uses (name + avatar) plus the id we
+ * persist in localStorage.
+ */
+type Sender = {
+  id: string
+  name: string
+  avatar: string
+}
+
+function getSenders(): Sender[] {
+  return conversations.map((c) => ({
+    id: c.id,
+    name: c.name,
+    avatar: c.avatar,
+  }))
+}
+
+function resolveSender(id: string | null, senders: Sender[]): Sender {
+  return (
+    senders.find((s) => s.id === id) ??
+    senders.find((s) => s.id === DEFAULT_SENDER_ID) ??
+    senders[0]
+  )
+}
+
 export function NotificationTimerDialog({
   open,
   onClose,
@@ -28,16 +62,25 @@ export function NotificationTimerDialog({
   open: boolean
   onClose: () => void
 }) {
+  const senders = useMemo(() => getSenders(), [])
+
   const [selectedTimer, setSelectedTimer] = useState<number>(30)
+  const [senderId, setSenderId] = useState<string>(DEFAULT_SENDER_ID)
+  const [body, setBody] = useState<string>(DEFAULT_BODY)
   const [isExiting, setIsExiting] = useState(false)
 
-  // Load saved timer value on mount
+  // Hydrate from localStorage on mount
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY)
-    if (saved) {
-      setSelectedTimer(parseInt(saved, 10))
-    }
+    const savedTimer = localStorage.getItem(STORAGE_KEY)
+    if (savedTimer) setSelectedTimer(parseInt(savedTimer, 10))
+    const savedSender = localStorage.getItem(SENDER_KEY)
+    if (savedSender) setSenderId(savedSender)
+    const savedBody = localStorage.getItem(BODY_KEY)
+    if (savedBody !== null) setBody(savedBody)
   }, [])
+
+  const selectedSender = resolveSender(senderId, senders)
+  const previewBody = body.trim().length > 0 ? body : DEFAULT_BODY
 
   const handleClose = useCallback(() => {
     setIsExiting(true)
@@ -47,21 +90,28 @@ export function NotificationTimerDialog({
     }, 200)
   }, [onClose])
 
+  const handleResetBody = useCallback(() => {
+    setBody(DEFAULT_BODY)
+  }, [])
+
   const handleSave = useCallback(async () => {
+    const bodyToSave = body.trim().length > 0 ? body.trim() : DEFAULT_BODY
+
     localStorage.setItem(STORAGE_KEY, selectedTimer.toString())
+    localStorage.setItem(SENDER_KEY, senderId)
+    localStorage.setItem(BODY_KEY, bodyToSave)
     localStorage.setItem(DISMISSED_KEY, "true")
 
-    // Request notification permission if timer is enabled
+    // Request permission only when the user actually wants a push.
     if (selectedTimer > 0 && "Notification" in window) {
       const permission = await Notification.requestPermission()
       if (permission === "granted") {
-        // Schedule the notification
-        scheduleNotification(selectedTimer)
+        scheduleNotification(selectedTimer, selectedSender, bodyToSave)
       }
     }
 
     handleClose()
-  }, [selectedTimer, handleClose])
+  }, [selectedTimer, senderId, body, selectedSender, handleClose])
 
   if (!open) return null
 
@@ -71,28 +121,37 @@ export function NotificationTimerDialog({
       <div
         className={cn(
           "fixed inset-0 z-50 bg-foreground/20 backdrop-blur-sm transition-opacity duration-200",
-          isExiting ? "opacity-0" : "opacity-100"
+          isExiting ? "opacity-0" : "opacity-100",
         )}
         onClick={handleClose}
         aria-hidden="true"
       />
 
-      {/* Dialog */}
+      {/* Centering layer — flex keeps the dialog exactly in the middle of the
+         viewport regardless of its content height, avoiding the drift that
+         can happen when combining Tailwind translate utilities with a
+         keyframe animation that also manipulates `transform`. */}
       <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="notification-dialog-title"
-        className={cn(
-          "fixed left-1/2 top-1/2 z-50 w-[90vw] max-w-sm rounded-3xl bg-card p-6 shadow-xl ring-1 ring-border/60",
-          isExiting ? "animate-pop-out" : "animate-pop-in"
-        )}
+        className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4"
+        aria-hidden="true"
       >
+        {/* Dialog */}
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="notification-dialog-title"
+          className={cn(
+            "pointer-events-auto relative w-[92vw] max-w-md rounded-3xl bg-card p-6 shadow-xl ring-1 ring-border/60",
+            "max-h-[calc(100dvh-2rem)] overflow-y-auto scrollbar-thin",
+            isExiting ? "animate-scale-out" : "animate-scale-in",
+          )}
+        >
         {/* Close button */}
         <button
           type="button"
           onClick={handleClose}
           aria-label="Закрыть"
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          className="absolute right-4 top-4 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         >
           <X className="h-4 w-4" strokeWidth={1.8} />
         </button>
@@ -113,39 +172,129 @@ export function NotificationTimerDialog({
             Уведомления о совпадениях
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Настройте таймер для получения уведомлений о новых совпадениях
+            Настройте таймер, отправителя и текст уведомления.
           </p>
         </div>
 
         {/* Timer options */}
-        <div className="mt-6 grid grid-cols-2 gap-2">
-          {timerOptions.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              onClick={() => setSelectedTimer(option.value)}
-              className={cn(
-                "rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200",
-                selectedTimer === option.value
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "bg-muted text-foreground hover:bg-muted/80"
-              )}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
+        <section className="mt-6">
+          <h3 className="mb-2 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+            Когда прислать
+          </h3>
+          <div className="grid grid-cols-2 gap-2">
+            {timerOptions.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setSelectedTimer(option.value)}
+                className={cn(
+                  "cursor-pointer rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200",
+                  selectedTimer === option.value
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-muted text-foreground hover:bg-muted/80",
+                )}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </section>
 
-        {/* Preview message */}
+        {/* Sender picker */}
+        <section className="mt-5">
+          <h3 className="mb-2 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+            От кого придёт
+          </h3>
+          <div
+            role="radiogroup"
+            aria-label="Отправитель уведомления"
+            className="flex flex-wrap gap-2"
+          >
+            {senders.map((s) => {
+              const active = s.id === senderId
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  onClick={() => setSenderId(s.id)}
+                  className={cn(
+                    "group flex cursor-pointer items-center gap-2 rounded-full py-1.5 pl-1.5 pr-3 text-sm transition-all",
+                    active
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "bg-muted text-foreground hover:bg-muted/80",
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "relative h-7 w-7 overflow-hidden rounded-full ring-2 transition-colors",
+                      active ? "ring-primary-foreground/50" : "ring-border",
+                    )}
+                  >
+                    <Image
+                      src={s.avatar}
+                      alt=""
+                      fill
+                      sizes="28px"
+                      className="object-cover"
+                    />
+                  </span>
+                  <span className="font-medium">{s.name}</span>
+                </button>
+              )
+            })}
+          </div>
+        </section>
+
+        {/* Body editor */}
+        <section className="mt-5">
+          <div className="mb-2 flex items-center justify-between">
+            <h3 className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+              Текст уведомления
+            </h3>
+            {body !== DEFAULT_BODY && (
+              <button
+                type="button"
+                onClick={handleResetBody}
+                className="cursor-pointer text-xs font-medium text-primary hover:underline"
+              >
+                Сбросить
+              </button>
+            )}
+          </div>
+          <textarea
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            rows={2}
+            maxLength={160}
+            placeholder={DEFAULT_BODY}
+            aria-label="Текст уведомления"
+            className="w-full resize-none rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          />
+          <p className="mt-1 text-[11px] text-muted-foreground">
+            Оставьте поле пустым, чтобы использовать стандартный текст.
+          </p>
+        </section>
+
+        {/* Live preview */}
         <div className="mt-5 rounded-2xl border border-border bg-background p-4">
           <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
-              <Bell className="h-5 w-5 text-primary" />
+            <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-1 ring-border">
+              <Image
+                src={selectedSender.avatar}
+                alt=""
+                fill
+                sizes="40px"
+                className="object-cover"
+              />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-foreground">Амур</p>
-              <p className="mt-0.5 text-sm text-muted-foreground">
-                У вас новое совпадение!
+              <p className="truncate text-sm font-medium text-foreground">
+                Амур · {selectedSender.name}
+              </p>
+              <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">
+                {previewBody}
               </p>
             </div>
           </div>
@@ -155,19 +304,20 @@ export function NotificationTimerDialog({
         <button
           type="button"
           onClick={handleSave}
-          className="mt-6 w-full rounded-full bg-primary py-3.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          className="mt-6 w-full cursor-pointer rounded-full bg-primary py-3.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
         >
           Сохранить настройки
         </button>
+        </div>
       </div>
     </>
   )
 }
 
 /**
- * Schedule a browser notification after the specified delay
+ * Schedule a browser notification after the specified delay.
  */
-function scheduleNotification(seconds: number) {
+function scheduleNotification(seconds: number, sender: Sender, body: string) {
   if (!("Notification" in window)) return
   if (Notification.permission !== "granted") return
 
@@ -177,42 +327,44 @@ function scheduleNotification(seconds: number) {
     clearTimeout(parseInt(existingTimer, 10))
   }
 
-  // Schedule new notification
   const timerId = window.setTimeout(() => {
-    new Notification("Амур", {
-      body: "У вас новое совпадение!",
-      icon: "/profiles/max.webp", // Notification comes from Max
-      badge: "/profiles/max.webp",
+    new Notification(`Амур · ${sender.name}`, {
+      body,
+      icon: sender.avatar,
+      badge: sender.avatar,
       tag: "amur-match",
     })
-    // Remove timer ID from storage
     window.sessionStorage.removeItem("amur-notification-timer-id")
   }, seconds * 1000)
 
-  // Store timer ID for potential cancellation
   window.sessionStorage.setItem("amur-notification-timer-id", timerId.toString())
 }
 
 /**
- * Hook to manage notification dialog visibility
+ * Hook to manage notification dialog visibility.
+ * Also restores any previously scheduled notification on reload.
  */
 export function useNotificationDialog() {
   const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
-    // Check if user has already dismissed the dialog this session
     const dismissed = localStorage.getItem(DISMISSED_KEY)
     if (!dismissed) {
-      // Show dialog after a short delay for better UX
       const timer = setTimeout(() => setIsOpen(true), 800)
       return () => clearTimeout(timer)
-    } else {
-      // If previously saved, restore the timer
-      const savedTimer = localStorage.getItem(STORAGE_KEY)
-      if (savedTimer && parseInt(savedTimer, 10) > 0) {
-        scheduleNotification(parseInt(savedTimer, 10))
-      }
     }
+
+    // Previously configured — reschedule with the saved settings.
+    const savedTimer = localStorage.getItem(STORAGE_KEY)
+    const seconds = savedTimer ? parseInt(savedTimer, 10) : 0
+    if (!seconds || Number.isNaN(seconds)) return
+
+    const savedSenderId = localStorage.getItem(SENDER_KEY)
+    const savedBody = localStorage.getItem(BODY_KEY) ?? DEFAULT_BODY
+    const senders = getSenders()
+    const sender = resolveSender(savedSenderId, senders)
+
+    scheduleNotification(seconds, sender, savedBody)
   }, [])
 
   return {

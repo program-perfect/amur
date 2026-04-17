@@ -50,6 +50,7 @@ export default function RootLayout({
   return (
     <html
       lang="ru"
+      data-scroll-behavior="smooth"
       className={`${inter.variable} ${geist.variable} ${instrumentSerif.variable} scroll-smooth bg-background`}
     >
       <body className="font-sans antialiased">

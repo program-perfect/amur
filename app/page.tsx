@@ -56,39 +56,39 @@ const features = [
     icon: Heart,
     title: "Умный подбор",
     description:
-      "Алгоритм анализирует интересы, ценности и образ жизни — предлагает только тех, с кем действительно совпадаешь.",
+      `Алгоритм анализирует интересы, ценности и образ жизни — предлагает только тех, с кем действительно совпадаешь.`,
   },
   {
     icon: Shield,
     title: "Верификация профилей",
     description:
-      "Проверка по фото и документам. Никаких ботов, фейков и пустых анкет — только реальные люди.",
+      `Проверка по фото и документам. Никаких ботов, фейков и пустых анкет — только реальные люди.`,
   },
   {
     icon: MessageCircle,
     title: "Живое общение",
     description:
-      "Современный мессенджер: голосовые, видео, фото, стикеры. Всё, чтобы разговор был настоящим.",
+      `Современный мессенджер: голосовые, видео, фото, стикеры. Все, чтобы разговор был настоящим.`,
   },
   {
     icon: Zap,
     title: "Мгновенные матчи",
     description:
-      "Первое совпадение — в среднем через 3 минуты после регистрации. Без ожиданий и пустых свайпов.",
+      `Первое совпадение — в среднем через 3 минуты после регистрации. Без ожиданий и пустых свайпов.`,
   },
   {
     icon: Lock,
     title: "Приватность",
     description:
-      "Ты сам решаешь, кто видит твой профиль. Режим инкогнито и сквозное шифрование переписки.",
+      `Ты сам решаешь, кто видит твой профиль. Режим инкогнито и сквозное шифрование переписки.`,
   },
   {
     icon: Flame,
-    title: "Серьёзные отношения",
+    title: "Серьезные отношения",
     description:
-      "Амур — для тех, кто ищет не флирт на вечер, а человека на всю жизнь. И находит.",
+      `Амур — для тех, кто ищет не флирт на вечер, а человека на всю жизнь. И находит.`,
   },
-]
+] as const
 
 const stats = [
   { value: "50K+", label: "Счастливых пар" },
@@ -150,14 +150,14 @@ export default function LandingPage() {
 
       {/* Header */}
       <header className="relative z-50 w-full">
-        <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-6">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 xs:h-20 xs:px-6">
           <Link href="/" className="flex items-center gap-2">
             <Image
               src="/amur-logo.png"
               alt="Амур"
               width={200}
               height={36}
-              className="h-30 w-auto"
+              className="h-24 w-auto xs:h-28 sm:h-30"
               priority
             />
           </Link>
@@ -185,6 +185,11 @@ export default function LandingPage() {
             <Link
               href="/auth?l=0"
               className="group inline-flex items-center gap-1.5 rounded-full bg-[#2a1418] px-4 py-2 text-sm font-medium text-white transition-all hover:bg-[#2a1418]/90"
+              style={{
+                textShadow: "0 1px 1px rgba(0, 0, 0, 0.35)",
+                boxShadow:
+                  "0 6px 14px -4px rgba(42, 20, 24, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -1px 0 rgba(0, 0, 0, 0.25)",
+              }}
             >
               Начать
               <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
@@ -194,7 +199,7 @@ export default function LandingPage() {
       </header>
 
       {/* Hero */}
-      <section className="relative z-10 px-6 pt-16 pb-32 sm:pt-24">
+      <section className="relative z-10 px-4 pt-10 pb-20 xs:px-6 xs:pt-16 xs:pb-24 sm:pt-24 sm:pb-32">
         <div className="mx-auto max-w-5xl text-center">
           <div className="mb-1 inline-flex items-center gap-2 rounded-full border border-[#2a1418]/10 bg-white/60 px-4 py-1.5 text-md backdrop-blur-sm">
             <span className="relative flex h-1.5 w-1.5">
@@ -204,9 +209,9 @@ export default function LandingPage() {
             <span className="text-[#2a1418]/80">Более <span className='font-bold'>{`50 000`}</span> счастливых пар уже с нами</span>
           </div>
 
-          <h1 className="mb-5 text-5xl font-semibold tracking-tight text-balance sm:text-6xl md:text-7xl lg:text-[80px] lg:leading-[1.2]">
+          <h1 className="mb-5 text-4xl font-semibold tracking-tight text-balance xs:text-5xl sm:text-6xl md:text-7xl lg:text-[80px] lg:leading-[1.2]">
             Любовь — это{" "}
-            <span className="pr-3 font-serif italic font-normal bg-linear-to-r from-[oklch(0.56_0.2_8)] via-[oklch(0.62_0.22_12)] to-[oklch(0.7_0.18_40)] bg-clip-text text-transparent text-9xl underline">
+            <span className="pr-3 font-serif italic font-normal bg-linear-to-r from-[oklch(0.56_0.2_8)] via-[oklch(0.62_0.22_12)] to-[oklch(0.7_0.18_40)] bg-clip-text text-transparent text-6xl xs:text-7xl sm:text-8xl md:text-9xl underline">
               алгоритм
             </span>
             <br />
@@ -222,6 +227,11 @@ export default function LandingPage() {
             <Link
               href="/auth?l=0"
               className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#2a1418] px-6 py-3 text-sm font-medium text-white transition-all hover:bg-[#2a1418]/90 sm:w-auto"
+              style={{
+                textShadow: "0 1px 1px rgba(0, 0, 0, 0.4)",
+                boxShadow:
+                  "0 10px 24px -8px rgba(42, 20, 24, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 -2px 2px rgba(0, 0, 0, 0.25)",
+              }}
             >
               Начать бесплатно
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -229,6 +239,10 @@ export default function LandingPage() {
             <a
               href="#stories"
               className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#2a1418]/10 bg-white/60 px-6 py-3 text-sm font-medium text-[#2a1418] backdrop-blur-sm transition-colors hover:bg-white sm:w-auto"
+              style={{
+                boxShadow:
+                  "0 6px 16px -6px rgba(42, 20, 24, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 0 rgba(42, 20, 24, 0.06)",
+              }}
             >
               Смотреть истории
             </a>
@@ -286,15 +300,15 @@ export default function LandingPage() {
       </section>
 
       {/* Stats */}
-      <section className="relative z-10 border-y border-[#2a1418]/5 bg-white/40 py-16 backdrop-blur-sm">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+      <section className="relative z-10 border-y border-[#2a1418]/5 bg-white/40 py-12 backdrop-blur-sm sm:py-16">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="grid grid-cols-2 gap-6 xs:gap-8 md:grid-cols-4">
             {stats.map((stat, i) => (
               <div key={i} className="text-center">
-                <div className="bg-linear-to-b from-[#2a1418] to-[#2a1418]/60 bg-clip-text font-serif text-8xl font-normal text-transparent sm:text-8xl">
+                <div className="bg-linear-to-b from-[#2a1418] to-[#2a1418]/60 bg-clip-text font-serif text-5xl font-normal text-transparent xs:text-6xl sm:text-7xl md:text-8xl">
                   {stat.value}
                 </div>
-                <div className="mt-2 text-md text-[#2a1418]/50">{stat.label}</div>
+                <div className="mt-2 text-sm text-[#2a1418]/50 xs:text-base">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -302,23 +316,23 @@ export default function LandingPage() {
       </section>
 
       {/* Features */}
-      <section id="features" className="relative z-10 px-6 py-32">
+      <section id="features" className="relative z-10 px-4 py-20 xs:px-6 sm:py-24 md:py-32">
         <div className="mx-auto max-w-6xl">
-          <div className="mx-auto mb-16 max-w-2xl text-center">
+          <div className="mx-auto mb-10 max-w-2xl text-center sm:mb-14 md:mb-16">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#2a1418]/10 bg-white/60 px-3 py-1 text-xs text-[#2a1418]/60 backdrop-blur-sm">
               <Sparkles className="h-3 w-3" />
               Возможности
             </div>
-            <h2 className="text-4xl font-medium tracking-tight text-balance sm:text-5xl">
+            <h2 className="text-3xl font-medium tracking-tight text-balance xs:text-4xl sm:text-5xl">
               Всё для того, чтобы найти{" "}
-              <span className="font-serif italic text-[1.35em] font-normal text-[oklch(0.56_0.2_8)]">свою вторую половинку</span>
+              <span className="font-serif italic text-[1.25em] font-normal text-[oklch(0.56_0.2_8)] xs:text-[1.35em]">свою вторую половинку</span>
             </h2>
-            <p className="mt-4 text-lg text-[#2a1418]/60 text-pretty">
+            <p className="mt-4 text-base text-[#2a1418]/60 text-pretty xs:text-lg">
               Технологии, которые помогают встретить того самого человека.
             </p>
           </div>
 
-          <div className="grid gap-px overflow-hidden rounded-3xl border border-[#2a1418]/10 bg-[#2a1418]/10 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-px overflow-hidden rounded-3xl border border-[#2a1418]/10 bg-[#2a1418]/10 xs:grid-cols-2 lg:grid-cols-3">
             {features.map((feature, i) => (
               <div
                 key={i}
@@ -336,23 +350,23 @@ export default function LandingPage() {
       </section>
 
       {/* Stories */}
-      <section id="stories" className="relative z-10 px-6 py-32">
+      <section id="stories" className="relative z-10 px-4 py-20 xs:px-6 sm:py-24 md:py-32">
         <div className="mx-auto max-w-6xl">
-          <div className="mx-auto mb-16 max-w-2xl text-center">
+          <div className="mx-auto mb-10 max-w-2xl text-center sm:mb-14 md:mb-16">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#2a1418]/10 bg-white/60 px-3 py-1 text-xs text-[#2a1418]/60 backdrop-blur-sm">
               <Heart className="h-3 w-3" />
               Истории любви
             </div>
-            <h2 className="text-4xl font-medium tracking-tight text-balance sm:text-5xl">
+            <h2 className="text-3xl font-medium tracking-tight text-balance xs:text-4xl sm:text-5xl">
               Их истории начались{" "}
-              <span className="font-serif italic text-[1.35em] underline font-normal text-[oklch(0.56_0.2_8)]">здесь</span>
+              <span className="font-serif italic text-[1.25em] underline font-normal text-[oklch(0.56_0.2_8)] xs:text-[1.35em]">здесь</span>
             </h2>
-            <p className="mt-4 text-lg text-[#2a1418]/60 text-pretty">
+            <p className="mt-4 text-base text-[#2a1418]/60 text-pretty xs:text-lg">
               Каждый день сотни людей находят свою любовь благодаря Амуру.
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 xs:gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {couples.map((couple, i) => (
               <div
                 key={i}
@@ -384,20 +398,20 @@ export default function LandingPage() {
       </section>
 
       {/* Testimonials */}
-      <section id="testimonials" className="relative z-10 px-6 py-32">
+      <section id="testimonials" className="relative z-10 px-4 py-20 xs:px-6 sm:py-24 md:py-32">
         <div className="mx-auto max-w-6xl">
-          <div className="mx-auto mb-16 max-w-2xl text-center">
+          <div className="mx-auto mb-10 max-w-2xl text-center sm:mb-14 md:mb-16">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#2a1418]/10 bg-white/60 px-3 py-1 text-xs text-[#2a1418]/60 backdrop-blur-sm">
               <Star className="h-3 w-3" />
               Отзывы
             </div>
-            <h2 className="text-4xl font-medium tracking-tight text-balance sm:text-5xl">
+            <h2 className="text-3xl font-medium tracking-tight text-balance xs:text-4xl sm:text-5xl">
               Говорят{" "}
-              <span className="font-serif italic text-[1.35em] font-normal text-[oklch(0.56_0.2_8)]">наши люди</span>
+              <span className="font-serif italic text-[1.25em] font-normal text-[oklch(0.56_0.2_8)] xs:text-[1.35em]">наши люди</span>
             </h2>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-4 xs:gap-6 md:grid-cols-3">
             {testimonials.map((testimonial, i) => (
               <div
                 key={i}
@@ -430,9 +444,9 @@ export default function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section className="relative z-10 px-6 py-16">
+      <section className="relative z-10 px-4 py-12 xs:px-6 xs:py-16">
         <div className="mx-auto max-w-5xl">
-          <div className="relative overflow-hidden rounded-3xl border border-[#2a1418]/10 bg-linear-to-br from-[oklch(0.92_0.06_8)] via-[#fdf7f4] to-[oklch(0.93_0.05_50)] p-12 text-center shadow-xl shadow-[oklch(0.56_0.2_8)]/10 sm:p-20">
+          <div className="relative overflow-hidden rounded-3xl border border-[#2a1418]/10 bg-linear-to-br from-[oklch(0.92_0.06_8)] via-[#fdf7f4] to-[oklch(0.93_0.05_50)] p-8 text-center shadow-xl shadow-[oklch(0.56_0.2_8)]/10 xs:p-12 sm:p-20">
             <div
               className="pointer-events-none absolute inset-0 opacity-[0.4]"
               style={{
@@ -452,9 +466,9 @@ export default function LandingPage() {
             />
 
             <div className="relative">
-              <h2 className="mb-5 text-4xl font-medium tracking-tight text-balance sm:text-5xl lg:text-6xl">
+              <h2 className="mb-5 text-3xl font-medium tracking-tight text-balance xs:text-4xl sm:text-5xl lg:text-6xl">
                 Твоя история любви{" "}
-                <span className="font-serif italic text-[1.425em] font-normal text-[oklch(0.56_0.2_8)]">ждёт</span>
+                <span className="font-serif italic text-[1.3em] font-normal text-[oklch(0.56_0.2_8)] xs:text-[1.425em]">ждёт</span>
               </h2>
               <p className="mx-auto mb-10 max-w-xl text-lg text-[#2a1418]/70 text-pretty">
                 Присоединяйся к тысячам людей, которые уже нашли своё счастье.
@@ -464,6 +478,11 @@ export default function LandingPage() {
                 <Link
                   href="/auth?l=0"
                   className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#2a1418] px-7 py-3.5 text-sm font-medium text-white transition-all hover:bg-[#2a1418]/90 sm:w-auto"
+                  style={{
+                    textShadow: "0 1px 1px rgba(0, 0, 0, 0.4)",
+                    boxShadow:
+                      "0 12px 28px -10px rgba(42, 20, 24, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 -2px 2px rgba(0, 0, 0, 0.25)",
+                  }}
                 >
                   Создать профиль
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -471,6 +490,10 @@ export default function LandingPage() {
                 <Link
                   href="/auth?l=1"
                   className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#2a1418]/15 bg-white/80 px-7 py-3.5 text-sm font-medium text-[#2a1418] backdrop-blur-sm transition-colors hover:bg-white sm:w-auto"
+                  style={{
+                    boxShadow:
+                      "0 6px 16px -6px rgba(42, 20, 24, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(42, 20, 24, 0.06)",
+                  }}
                 >
                   Войти
                 </Link>
@@ -481,7 +504,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-[#2a1418]/5 px-6 py-14">
+      <footer className="relative z-10 border-t border-[#2a1418]/5 px-4 py-10 xs:px-6 sm:py-14">
         <div className="mx-auto max-w-6xl">
           <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
             <div className="flex items-center">

@@ -6,8 +6,20 @@ import Image from "next/image"
 import Link from 'next/link'
 import { useState } from "react"
 
-const items = [
-  { icon: Flame, label: "Лента", key: "feed" },
+type NavItem = {
+  icon: typeof Flame
+  label: string
+  key: string
+  active?: boolean
+  /** When present, the item renders as a Next.js `<Link>` to this route
+   *  instead of a plain button. */
+  href?: string
+}
+
+const items: NavItem[] = [
+  // "Лента" (feed) lives in a separate sub-app at /feed — treat it as a
+  // navigational link so clicking it actually routes there.
+  { icon: Flame, label: "Лента", key: "feed", href: "/feed" },
   { icon: Compass, label: "Поиск", key: "discover" },
   { icon: Heart, label: "Симпатии", key: "likes" },
   { icon: MessageCircle, label: "Сообщения", key: "messages", active: true },
@@ -95,39 +107,62 @@ export function LeftNav({ onOpenNotifications }: LeftNavProps) {
 
         {/* Nav */}
         <nav className={cn("flex flex-col gap-2", expanded ? "items-stretch" : "items-center")}>
-          {items.map(({ icon: Icon, label, key, active }) => (
-            <button
-              key={key}
-              type="button"
-              aria-label={label}
-              aria-current={active ? "page" : undefined}
-              className={cn(
-                "cursor-pointer group relative flex h-11 items-center rounded-full transition-colors",
-                expanded ? "w-full justify-start gap-3 px-3" : "w-11 justify-center",
-                active
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-sidebar-accent hover:text-foreground",
-              )}
-            >
-              <Icon className="h-4.5 w-4.5 shrink-0" strokeWidth={1.6} />
-              {expanded && (
-                <span
-                  className={cn(
-                    "truncate text-sm tracking-tight",
-                    active ? "font-semibold text-primary" : "font-normal text-foreground/80",
-                  )}
+          {items.map(({ icon: Icon, label, key, active, href }) => {
+            const sharedClassName = cn(
+              "cursor-pointer group relative flex h-11 items-center rounded-full transition-colors",
+              expanded ? "w-full justify-start gap-3 px-3" : "w-11 justify-center",
+              active
+                ? "bg-primary/10 text-primary"
+                : "text-muted-foreground hover:bg-sidebar-accent hover:text-foreground",
+            )
+            const inner = (
+              <>
+                <Icon className="h-4.5 w-4.5 shrink-0" strokeWidth={1.6} />
+                {expanded && (
+                  <span
+                    className={cn(
+                      "truncate text-sm tracking-tight",
+                      active ? "font-semibold text-primary" : "font-normal text-foreground/80",
+                    )}
+                  >
+                    {label}
+                  </span>
+                )}
+                {active && !expanded && (
+                  <span className="absolute -left-4.25 top-1/2 h-5 w-0.75 -translate-y-1/2 rounded-r-full bg-primary" />
+                )}
+                {active && expanded && (
+                  <span className="absolute -left-4 top-1/2 h-5 w-0.75 -translate-y-1/2 rounded-r-full bg-primary" />
+                )}
+              </>
+            )
+            // When an `href` is provided the item routes via Next.js
+            // Link — otherwise it stays a plain action button.
+            if (href) {
+              return (
+                <Link
+                  key={key}
+                  href={href}
+                  aria-label={label}
+                  aria-current={active ? "page" : undefined}
+                  className={sharedClassName}
                 >
-                  {label}
-                </span>
-              )}
-              {active && !expanded && (
-                <span className="absolute -left-4.25 top-1/2 h-5 w-0.75 -translate-y-1/2 rounded-r-full bg-primary" />
-              )}
-              {active && expanded && (
-                <span className="absolute -left-4 top-1/2 h-5 w-0.75 -translate-y-1/2 rounded-r-full bg-primary" />
-              )}
-            </button>
-          ))}
+                  {inner}
+                </Link>
+              )
+            }
+            return (
+              <button
+                key={key}
+                type="button"
+                aria-label={label}
+                aria-current={active ? "page" : undefined}
+                className={sharedClassName}
+              >
+                {inner}
+              </button>
+            )
+          })}
         </nav>
       </div>
 

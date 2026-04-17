@@ -92,6 +92,12 @@
 }
 
 @theme inline {
+  /* Extra-small breakpoint — squeezes in between mobile (default) and
+     Tailwind's built-in `sm` (640px). Targets the 480–640 range where
+     small phones need a halfway step between the single-column stacked
+     mobile layout and the first real tablet/desktop tier. */
+  --breakpoint-xs: 30rem;
+
   --font-sans: var(--font-inter), "Inter Fallback", system-ui, sans-serif;
   --font-serif: var(--font-instrument-serif), "Georgia", serif;
   --font-mono: "Geist Mono", "Geist Mono Fallback";
@@ -156,6 +162,34 @@
   img {
     -webkit-user-drag: none;
   }
+  /* Touch-screen polish applied to every interactive element across
+     all routes so taps feel instant (no 300ms click delay) and don't
+     show the default blue iOS/Android tap highlight rectangle. */
+  button,
+  a,
+  [role="button"],
+  [role="menuitem"],
+  [role="tab"],
+  [role="link"],
+  input[type="button"],
+  input[type="submit"],
+  label[for],
+  summary {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* A gentle press-down feedback for touch devices — hover styles do
+     nothing on phones, so the scale softening fills in as tactile
+     confirmation that the tap registered. */
+  @media (hover: none) {
+    button:active,
+    a:active,
+    [role="button"]:active,
+    [role="menuitem"]:active,
+    [role="tab"]:active {
+      transition-duration: 80ms;
+    }
+  }
 }
 
 /* Smooth scroll for the whole document and nested scroll containers. */
@@ -203,6 +237,29 @@ html {
     transform: translate(-50%, -50%) scale(0.94);
   }
 }
+/* Scale-only popup — used when the dialog is centered via a flex wrapper
+   (no translate needed in the keyframe, so content-height changes don't
+   push the dialog off-center). */
+@keyframes amur-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes amur-scale-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+}
 @layer utilities {
   .animate-message-in {
     animation: amur-msg-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -215,6 +272,198 @@ html {
   }
   .animate-pop-out {
     animation: amur-pop-out 200ms cubic-bezier(0.4, 0, 1, 1) both;
+  }
+  .animate-scale-in {
+    animation: amur-scale-in 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .animate-scale-out {
+    animation: amur-scale-out 200ms cubic-bezier(0.4, 0, 1, 1) both;
+  }
+}
+
+/* ── Feed reaction picker animations ───────────────────────────────────
+   The picker slides up from the reaction button and fades in with a
+   subtle scale. Each reaction glyph gets its own personality: thumbs
+   up nods, fire flickers, laugh bounces sideways, wow pulses, sad
+   droops, and angry shakes. These play on-hover inside the picker
+   and on-pick (via the `-pop` variants) to celebrate the chosen
+   reaction on the committed badge. */
+@keyframes feed-picker-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes feed-picker-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(6px) scale(0.92);
+  }
+}
+@keyframes feed-reaction-like {
+  0% { transform: translateY(0) rotate(0); }
+  30% { transform: translateY(-6px) rotate(-10deg); }
+  60% { transform: translateY(-2px) rotate(6deg); }
+  100% { transform: translateY(0) rotate(0); }
+}
+@keyframes feed-reaction-fire {
+  0% { transform: scale(1); filter: brightness(1); }
+  25% { transform: scale(1.18) translateY(-2px); filter: brightness(1.15); }
+  50% { transform: scale(1.05) translateY(-4px) rotate(-4deg); }
+  75% { transform: scale(1.22) translateY(-2px) rotate(3deg); filter: brightness(1.2); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+@keyframes feed-reaction-haha {
+  0% { transform: translateX(0) rotate(0); }
+  20% { transform: translateX(-3px) rotate(-8deg); }
+  40% { transform: translateX(3px) rotate(8deg); }
+  60% { transform: translateX(-2px) rotate(-5deg); }
+  80% { transform: translateX(2px) rotate(5deg); }
+  100% { transform: translateX(0) rotate(0); }
+}
+@keyframes feed-reaction-wow {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+  70% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+@keyframes feed-reaction-sad {
+  0% { transform: translateY(0) rotate(0); }
+  30% { transform: translateY(2px) rotate(-6deg); }
+  60% { transform: translateY(3px) rotate(4deg); }
+  100% { transform: translateY(0) rotate(0); }
+}
+@keyframes feed-reaction-angry {
+  0% { transform: translateX(0) scale(1); }
+  15% { transform: translateX(-2px) scale(1.08); }
+  30% { transform: translateX(2px) scale(1.08); }
+  45% { transform: translateX(-2px) scale(1.08); }
+  60% { transform: translateX(2px) scale(1.08); }
+  75% { transform: translateX(-1px) scale(1.04); }
+  100% { transform: translateX(0) scale(1); }
+}
+@keyframes feed-reaction-pop {
+  0% { transform: scale(0.4); opacity: 0; }
+  60% { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes feed-skeleton-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@layer utilities {
+  .animate-picker-in {
+    animation: feed-picker-in 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .animate-picker-out {
+    animation: feed-picker-out 160ms cubic-bezier(0.4, 0, 1, 1) both;
+  }
+  .reaction-like:hover {
+    animation: feed-reaction-like 600ms ease-in-out;
+  }
+  .reaction-fire:hover {
+    animation: feed-reaction-fire 700ms ease-in-out;
+  }
+  .reaction-haha:hover {
+    animation: feed-reaction-haha 600ms ease-in-out;
+  }
+  .reaction-wow:hover {
+    animation: feed-reaction-wow 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .reaction-sad:hover {
+    animation: feed-reaction-sad 700ms ease-in-out;
+  }
+  .reaction-angry:hover {
+    animation: feed-reaction-angry 500ms ease-in-out;
+  }
+  .animate-reaction-pop {
+    animation: feed-reaction-pop 420ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  /* Animated shimmer for skeleton placeholders — used while a feed
+     post's image hasn't finished loading. */
+  .feed-skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--feed-muted) 0%,
+      var(--feed-muted-strong) 50%,
+      var(--feed-muted) 100%
+    );
+    background-size: 200% 100%;
+    animation: feed-skeleton-shimmer 1.6s linear infinite;
+  }
+
+  /* Ensure touch targets feel natural on mobile: remove the blue tap
+     highlight and suppress pointer-events on fully disabled elements. */
+  .touch-manipulate {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* ── Route transition animations ──────────────────────────────────────
+   These run on every navigation between pages. `route-in` plays on the
+   root `template.tsx` wrapper, so each new route enters with a soft
+   fade + upward lift instead of hard-swapping. `loading-fade-in` is
+   used by the global `loading.tsx` screen, and `loading-dot` powers
+   the three-dot heartbeat indicator rendered in the middle of that
+   screen. Keeping them here (in globals.css) means they're available
+   on every route without additional import overhead. */
+@keyframes route-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+@keyframes loading-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes loading-dot {
+  0%,
+  100% {
+    transform: translateY(0) scale(0.85);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateY(-8px) scale(1.1);
+    opacity: 1;
+  }
+}
+
+@layer utilities {
+  .animate-route-in {
+    animation: route-in 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .animate-loading-fade-in {
+    animation: loading-fade-in 220ms ease-out both;
+  }
+
+  /* Honour reduced-motion preferences — fade only, no translate or
+     blur, so users who ask for reduced motion aren't jolted. */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-route-in {
+      animation: loading-fade-in 200ms ease-out both;
+    }
   }
 }
 
@@ -237,5 +486,39 @@ html {
   }
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background: var(--muted-foreground);
+  }
+
+  /* Fully hidden scrollbar — used by horizontally scrolling chip rows. */
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* АртЛента side-panel scrollbar — always visible, thin, opaque grey.
+     Uses fixed rgba colours instead of the global `--border` token so it
+     stays legible on the feed's near-white paper background, and shows
+     a subtle track so the thumb positioning is clear. */
+  .scrollbar-feed {
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(120, 125, 140, 0.7) rgba(100, 105, 120, 0.12);
+  }
+  .scrollbar-feed::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  .scrollbar-feed::-webkit-scrollbar-track {
+    background: rgba(100, 105, 120, 0.1);
+    border-radius: 999px;
+  }
+  .scrollbar-feed::-webkit-scrollbar-thumb {
+    background: rgba(100, 105, 120, 0.55);
+    border-radius: 999px;
+  }
+  .scrollbar-feed::-webkit-scrollbar-thumb:hover {
+    background: rgba(80, 85, 100, 0.75);
   }
 }

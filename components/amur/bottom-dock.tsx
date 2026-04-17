@@ -9,9 +9,21 @@ import {
   Sparkles,
 } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 
-const items = [
-  { icon: Flame, label: "Лента", key: "feed" },
+type DockItem = {
+  icon: typeof Flame
+  label: string
+  key: string
+  active?: boolean
+  /** Optional route — when present the item renders as a navigation
+   *  link instead of a plain button. */
+  href?: string
+}
+
+const items: DockItem[] = [
+  // "Лента" is a standalone sub-app living at /feed.
+  { icon: Flame, label: "Лента", key: "feed", href: "/feed" },
   { icon: Compass, label: "Поиск", key: "discover" },
   { icon: Heart, label: "Симпатии", key: "likes" },
   { icon: MessageCircle, label: "Сообщения", key: "messages", active: true },
@@ -81,24 +93,45 @@ export function BottomDock({
         </div>
         <div className="hidden h-5 w-px bg-border/60 sm:block" />
 
-        {items.map(({ icon: Icon, label, key, active }) => (
-          <button
-            key={key}
-            type="button"
-            aria-label={label}
-            aria-current={active ? "page" : undefined}
-            className={cn(
-              "cursor-pointer relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-colors",
-              "max-[420px]:h-10 max-[420px]:w-10",
-              active
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "text-muted-foreground hover:bg-sidebar-accent/80 hover:text-foreground",
-            )}
-          >
-            <Icon className="h-[19px] w-[19px]" strokeWidth={1.7} />
-            <span className="sr-only">{label}</span>
-          </button>
-        ))}
+        {items.map(({ icon: Icon, label, key, active, href }) => {
+          const itemClassName = cn(
+            "cursor-pointer relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-colors",
+            "max-[420px]:h-10 max-[420px]:w-10",
+            active
+              ? "bg-primary text-primary-foreground shadow-sm"
+              : "text-muted-foreground hover:bg-sidebar-accent/80 hover:text-foreground",
+          )
+          const content = (
+            <>
+              <Icon className="h-[19px] w-[19px]" strokeWidth={1.7} />
+              <span className="sr-only">{label}</span>
+            </>
+          )
+          if (href) {
+            return (
+              <Link
+                key={key}
+                href={href}
+                aria-label={label}
+                aria-current={active ? "page" : undefined}
+                className={itemClassName}
+              >
+                {content}
+              </Link>
+            )
+          }
+          return (
+            <button
+              key={key}
+              type="button"
+              aria-label={label}
+              aria-current={active ? "page" : undefined}
+              className={itemClassName}
+            >
+              {content}
+            </button>
+          )
+        })}
 
         {/* Avatar stays visible on all tablet and mobile sizes */}
         <div className="h-5 w-px bg-border/60" />
