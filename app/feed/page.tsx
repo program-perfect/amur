@@ -87,18 +87,19 @@ export default function FeedPage() {
       >
         {/*
           Left rail — only from xl up (desktop). The aside levitates with
-          horizontal padding so the badge's glow halo isn't clipped, and
-          the column's content is faded top + bottom via a `mask-image`
-          gradient so scrollable content melts into the page instead of
-          being sliced off at the container edges.
+          generous horizontal padding (`px-6`) so the profile badge's
+          amber glow shadow breathes in every direction without being
+          sliced by the scroll container. Only the top + bottom of the
+          content fades out via `mask-image` so scrolling melts into
+          the page edges; the sides stay opaque and fully visible.
         */}
         <aside
-          className="sticky top-[140px] hidden h-[calc(100dvh-164px)] w-[246px] shrink-0 self-start overflow-y-auto px-3 pb-6 pt-4 xl:block xl:w-[266px] scrollbar-none"
+          className="sticky top-[124px] hidden h-[calc(100dvh-140px)] w-[280px] shrink-0 self-start overflow-y-auto px-6 pb-8 pt-5 xl:block xl:w-[300px] scrollbar-none"
           style={{
             WebkitMaskImage:
-              "linear-gradient(to bottom, transparent 0, black 20px, black calc(100% - 28px), transparent 100%)",
+              "linear-gradient(to bottom, transparent 0, black 24px, black calc(100% - 32px), transparent 100%)",
             maskImage:
-              "linear-gradient(to bottom, transparent 0, black 20px, black calc(100% - 28px), transparent 100%)",
+              "linear-gradient(to bottom, transparent 0, black 24px, black calc(100% - 32px), transparent 100%)",
           }}
         >
           <FeedSideLeft />
@@ -137,19 +138,22 @@ export default function FeedPage() {
           )}
         </main>
 
-        {/* Right rail — shown from xl up (desktop). Scrollbar is fully
-            hidden; the column is still scrollable via wheel / trackpad /
-            touch. The levitating feel comes from extra horizontal
-            padding (so card shadows breathe) plus a top + bottom
-            mask-image fade so content dissolves into the page rather
-            than being hard-clipped at the sticky container edge. */}
+        {/* Right rail — shown from xl up (desktop). Reaches a touch
+            higher (top-[112px]) and all the way down to the viewport
+            bottom so the column never shows an empty bleed. The top
+            edge is covered by a soft gradient "shadow" (painted over
+            the content via a `::before`-style overlay using the aside's
+            mask) so content dissolves smoothly as it slides under the
+            sticky header, while the bottom ends flush against the page
+            edge — no fade, just content. Scrollbar is fully hidden;
+            the column still scrolls via wheel / trackpad / touch. */}
         <aside
-          className="sticky top-[140px] hidden h-[calc(100dvh-164px)] w-[296px] shrink-0 self-start overflow-y-auto px-3 pb-6 pt-4 xl:block xl:w-[336px] scrollbar-none"
+          className="sticky top-[112px] hidden h-[calc(100dvh-112px)] w-[296px] shrink-0 self-start overflow-y-auto px-4 pb-8 pt-6 xl:block xl:w-[336px] scrollbar-none"
           style={{
             WebkitMaskImage:
-              "linear-gradient(to bottom, transparent 0, black 20px, black calc(100% - 28px), transparent 100%)",
+              "linear-gradient(to bottom, transparent 0, black 28px, black 100%)",
             maskImage:
-              "linear-gradient(to bottom, transparent 0, black 20px, black calc(100% - 28px), transparent 100%)",
+              "linear-gradient(to bottom, transparent 0, black 28px, black 100%)",
           }}
         >
           <FeedSideRight />
