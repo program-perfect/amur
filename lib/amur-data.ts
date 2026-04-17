@@ -110,7 +110,7 @@ export const conversations: Conversation[] = [
     distance: "3 км",
     compatibility: 96,
     about: "Ищу достойную женщину, которая сможет украсить мою жизнь.",
-    facts: [{ icon: MapPin, label: "Артемьевск · 8 км от вас" }],
+    facts: [{ icon: MapPin, label: "Артемьевск · 3 км от вас" }],
     interests: [
       { label: "Кино", icon: Film },
       { label: "Рестораны", icon: Utensils },

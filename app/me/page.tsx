@@ -42,8 +42,8 @@ const interests = [
 ]
 
 const stats = [
-  { label: "Симпатии", value: "13" },
-  { label: "Совпадения", value: "7" },
+  { label: "Симпатии", value: "5" },
+  { label: "Совпадения", value: "5" },
   { label: "Рейтинг", value: "5.0" },
 ]
 
