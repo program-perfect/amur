@@ -86,12 +86,11 @@ export default function FeedPage() {
         className="mx-auto flex w-full max-w-[1300px] gap-0 pb-28 sm:gap-5 sm:px-4 sm:pb-32 md:gap-6 md:pb-10 lg:px-6 xl:gap-8"
       >
         {/*
-          Left rail — only from lg up. The sticky top offset sits just
-          below the header (title row + chip strip) plus 12px of breathing
-          room so panels don't clip against the header's bottom edge when
-          scrolling.
+          Left rail — only from xl up (desktop). The sticky top offset sits
+          below the header (title row + chip strip) plus breathing room so
+          panels don't clip against the header's bottom edge when scrolling.
         */}
-        <aside className="sticky top-[132px] hidden h-[calc(100dvh-148px)] w-[230px] shrink-0 self-start overflow-y-auto pr-1 lg:block xl:w-[250px] scrollbar-feed">
+        <aside className="sticky top-[140px] hidden h-[calc(100dvh-156px)] w-[230px] shrink-0 self-start overflow-y-auto pr-1 xl:block xl:w-[250px] scrollbar-feed">
           <FeedSideLeft />
         </aside>
 
@@ -128,10 +127,10 @@ export default function FeedPage() {
           )}
         </main>
 
-        {/* Right rail — shown from md up. Uses the always-visible thin
-            grey scrollbar so the widgets don't slide under a transparent
-            track when overflowing. */}
-        <aside className="sticky top-[124px] hidden h-[calc(100dvh-140px)] w-[260px] shrink-0 self-start overflow-y-auto pl-1 md:block md:top-[118px] lg:top-[132px] lg:h-[calc(100dvh-148px)] lg:w-[280px] xl:w-[320px] scrollbar-feed">
+        {/* Right rail — shown from xl up (desktop). Uses the always-visible
+            thin grey scrollbar so the widgets don't slide under a
+            transparent track when overflowing. */}
+        <aside className="sticky top-[140px] hidden h-[calc(100dvh-156px)] w-[280px] shrink-0 self-start overflow-y-auto pl-1 xl:block xl:w-[320px] scrollbar-feed">
           <FeedSideRight />
         </aside>
       </div>
