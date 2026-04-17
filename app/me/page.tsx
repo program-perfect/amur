@@ -336,7 +336,7 @@ function SectionTitle({
 }) {
   return (
     <h2
-      className={`mb-3 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground ${className ?? ""}`}
+      className={`mb-3 mt-3 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground ${className ?? ""}`}
     >
       {children}
     </h2>
