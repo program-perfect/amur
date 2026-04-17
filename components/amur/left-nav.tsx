@@ -186,7 +186,7 @@ export function LeftNav({ onOpenNotifications }: LeftNavProps) {
                 className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-foreground/85 via-foreground/40 to-transparent"
               />
               <div className="absolute inset-x-0 bottom-0 flex flex-col gap-0.5 px-3.5 pb-3 text-background">
-                <span className="font-serif text-xl leading-tight tracking-tight">
+                <span className="font-serif text-3xl leading-tight tracking-tight">
                   Татьяна
                 </span>
                 <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-background/75">
