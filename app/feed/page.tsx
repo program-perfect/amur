@@ -98,7 +98,7 @@ export default function FeedPage() {
           xl+           : left + center + right with full widgets
       */}
       <div
-        className="mx-auto flex w-full max-w-[1300px] gap-0 pb-28 sm:gap-5 sm:px-4 sm:pb-32 md:gap-6 md:pb-10 lg:px-6 xl:gap-8"
+        className="mx-auto flex w-full max-w-[1300px] gap-0 pb-28 sm:gap-5 sm:px-4 sm:pb-32 md:gap-6 md:pb-10 lg:px-6 xl:gap-1"
       >
         {/*
           Left rail — only from xl up (desktop). The aside levitates with
@@ -109,7 +109,7 @@ export default function FeedPage() {
           the page edges; the sides stay opaque and fully visible.
         */}
         <aside
-          className="sticky top-[124px] hidden h-[calc(100dvh-140px)] w-[280px] shrink-0 self-start overflow-y-auto px-6 pb-8 pt-5 xl:block xl:w-[300px] scrollbar-none"
+          className="sticky top-[124px] hidden h-[calc(100dvh-140px)] w-[280px] shrink-0 self-start overflow-y-auto px-6 pb-8 pt-5 xl:block xl:w-[300px] scrollbar-none overflow-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
           style={{
             WebkitMaskImage:
               "linear-gradient(to bottom, transparent 0, black 24px, black calc(100% - 32px), transparent 100%)",
@@ -162,7 +162,7 @@ export default function FeedPage() {
             treatment. Scrollbar is fully hidden; the column still
             scrolls via wheel / trackpad / touch. */}
         <aside
-          className="sticky top-[112px] hidden h-[calc(100dvh-112px)] w-[296px] shrink-0 self-start overflow-y-auto px-4 pb-10 pt-6 xl:block xl:w-[336px] scrollbar-none"
+          className="sticky top-[112px] hidden h-[calc(100dvh-112px)] w-[296px] shrink-0 self-start overflow-y-auto px-4 pb-10 pt-6 xl:block xl:w-[336px] scrollbar-none overflow-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
           style={{
             WebkitMaskImage:
               "linear-gradient(to bottom, transparent 0, black 28px, black calc(100% - 36px), transparent 100%)",

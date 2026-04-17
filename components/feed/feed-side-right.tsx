@@ -6,7 +6,7 @@ import {
   TrendingUp,
   UserPlus,
 } from "lucide-react"
-import { useState } from "react"
+import { useRef, useState } from "react"
 
 type TrendingTag = { tag: string; posts: string }
 type Community = {
@@ -44,9 +44,63 @@ const events: Event[] = [
  */
 export function FeedSideRight() {
   const [joined, setJoined] = useState<Record<string, boolean>>({})
+  const scrollerRef = useRef<HTMLElement | null>(null)
+  const isDraggingRef = useRef(false)
+  const movedRef = useRef(false)
+  const startYRef = useRef(0)
+  const startScrollTopRef = useRef(0)
+
+  const onWheel = (e: React.WheelEvent<HTMLElement>) => {
+    const el = scrollerRef.current
+    if (!el) return
+    el.scrollTop += e.deltaY
+  }
+
+  const onPointerDown = (e: React.PointerEvent<HTMLElement>) => {
+    const el = scrollerRef.current
+    if (!el) return
+
+    isDraggingRef.current = true
+    movedRef.current = false
+    startYRef.current = e.clientY
+    startScrollTopRef.current = el.scrollTop
+    el.setPointerCapture?.(e.pointerId)
+  }
+
+  const onPointerMove = (e: React.PointerEvent<HTMLElement>) => {
+    const el = scrollerRef.current
+    if (!el || !isDraggingRef.current) return
+
+    const dy = e.clientY - startYRef.current
+    if (Math.abs(dy) > 4) movedRef.current = true
+    el.scrollTop = startScrollTopRef.current - dy
+  }
+
+  const stopDragging = () => {
+    isDraggingRef.current = false
+  }
+
+  const onClickCapture = (e: React.MouseEvent<HTMLElement>) => {
+    if (!movedRef.current) return
+    e.preventDefault()
+    e.stopPropagation()
+    movedRef.current = false
+  }
 
   return (
-    <aside aria-label="Сводка Артемьевска" className="flex flex-col gap-5">
+    <aside
+      ref={scrollerRef}
+      aria-label="Сводка Артемьевска"
+      onWheel={onWheel}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={stopDragging}
+      onPointerCancel={stopDragging}
+      onPointerLeave={stopDragging}
+      onClickCapture={onClickCapture}
+      className="flex flex-col gap-5 overflow-y-auto select-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scrollbar-hidden"
+      style={{ touchAction: "pan-y" }}
+    >
       {/* Weather today */}
       <section
         className="relative overflow-hidden rounded-3xl p-5"
@@ -64,7 +118,7 @@ export function FeedSideRight() {
               −3°
             </div>
             <div className="mt-2 text-[12.5px] opacity-80">
-              Лёгкий снег, ветер 3 м/с
+              Облачно, ветер 3 м/с
             </div>
           </div>
           <CloudSnow className="h-10 w-10 opacity-80" strokeWidth={1.4} />
@@ -212,7 +266,7 @@ export function FeedSideRight() {
                         }
                   }
                 >
-                  {isJoined ? "Вы с ними" : "Подписаться"}
+                  {isJoined ? "Отписаться" : "Подписаться"}
                 </button>
               </li>
             )

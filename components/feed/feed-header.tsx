@@ -106,7 +106,7 @@ export function FeedHeader<T extends Category>({
           doesn't compete with the sticky header height. */}
       <nav
         aria-label="Рубрики"
-        className="scrollbar-none mx-auto hidden w-full max-w-[1300px] items-center gap-1.5 overflow-x-auto px-4 pb-2.5 sm:px-5 lg:px-6 xl:flex xl:gap-2"
+        className="scrollbar-none mx-auto hidden w-full max-w-[1300px] items-center gap-1.5 overflow-x-auto px-4 pb-2.5 sm:px-5 lg:px-6 xl:flex xl:gap-2 justify-around"
       >
         {categories.map((c) => {
           const isActive = c.id === active

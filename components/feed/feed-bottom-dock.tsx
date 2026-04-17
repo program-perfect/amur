@@ -1,5 +1,7 @@
 "use client"
 
+import { useRef } from "react"
+
 type Category = { id: string; label: string }
 
 /**
@@ -24,17 +26,74 @@ export function FeedBottomDock<T extends Category>({
   active: T["id"]
   onSelect: (id: T["id"]) => void
 }) {
+  const scrollerRef = useRef<HTMLDivElement | null>(null)
+  const isDraggingRef = useRef(false)
+  const movedRef = useRef(false)
+  const startXRef = useRef(0)
+  const startScrollLeftRef = useRef(0)
+
+  const onWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    const el = scrollerRef.current
+    if (!el) return
+
+    const mostlyVertical = Math.abs(e.deltaY) > Math.abs(e.deltaX)
+    if (!mostlyVertical) return
+
+    el.scrollLeft += e.deltaY
+    e.preventDefault()
+  }
+
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    const el = scrollerRef.current
+    if (!el) return
+
+    isDraggingRef.current = true
+    movedRef.current = false
+    startXRef.current = e.clientX
+    startScrollLeftRef.current = el.scrollLeft
+
+    el.setPointerCapture?.(e.pointerId)
+  }
+
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const el = scrollerRef.current
+    if (!el || !isDraggingRef.current) return
+
+    const dx = e.clientX - startXRef.current
+    if (Math.abs(dx) > 4) movedRef.current = true
+
+    el.scrollLeft = startScrollLeftRef.current - dx
+  }
+
+  const stopDragging = () => {
+    isDraggingRef.current = false
+  }
+
+  const onClickCapture = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!movedRef.current) return
+    e.preventDefault()
+    e.stopPropagation()
+    movedRef.current = false
+  }
+
   return (
     <nav
       aria-label="Рубрики · быстрый переход"
-      className="fixed bottom-4 left-1/2 z-40 w-[min(calc(100vw-24px),580px)] -translate-x-1/2 lg:hidden"
+      className="fixed bottom-4 left-1/2 z-40 w-[min(calc(100vw-24px),580px)] -translate-x-1/2 xl:hidden"
     >
       <div
-        className="scrollbar-none flex items-center gap-1.5 overflow-x-auto rounded-full px-3 py-3"
+        ref={scrollerRef}
+        onWheel={onWheel}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={stopDragging}
+        onPointerCancel={stopDragging}
+        onPointerLeave={stopDragging}
+        onClickCapture={onClickCapture}
+        className="flex cursor-grab items-center gap-1.5 overflow-x-auto rounded-full px-3 py-3 select-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
         style={{
           backgroundColor: "var(--feed-surface)",
-          /* Thick layered shadow tinted with the background color for a
-             cohesive "lifted paper" appearance that blends with the feed. */
+          touchAction: "pan-x",
           boxShadow: [
             "0 0 0 1px color-mix(in oklab, var(--feed-ink) 6%, transparent)",
             "0 32px 64px -12px color-mix(in oklab, var(--feed-bg) 85%, var(--feed-ink))",
