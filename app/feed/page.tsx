@@ -3,7 +3,16 @@
 import { FeedComposer } from "@/components/feed/feed-composer"
 import { FeedHeader } from "@/components/feed/feed-header"
 import { FeedPost } from "@/components/feed/feed-post"
-import { generateFeed } from "@/lib/feed-data"
+import { FeedPromoAmur } from "@/components/feed/feed-promo-amur"
+import { FeedPromoArtlenta } from "@/components/feed/feed-promo-artlenta"
+import { FeedSideLeft } from "@/components/feed/feed-side-left"
+import { FeedSideRight } from "@/components/feed/feed-side-right"
+import {
+  filterItemsByCategory,
+  generateFeedItems,
+  type FeedCategory,
+  type FeedItem,
+} from "@/lib/feed-data"
 import { useMemo, useState } from "react"
 
 const categories = [
@@ -19,31 +28,41 @@ type CategoryId = (typeof categories)[number]["id"]
 export default function FeedPage() {
   const [active, setActive] = useState<CategoryId>("all")
   // Deterministic generation — SSR and client render identical content.
-  const posts = useMemo(() => generateFeed(28), [])
+  const items = useMemo(() => generateFeedItems(36), [])
 
-  const visible = useMemo(() => {
-    if (active === "all") return posts
-    return posts.filter((p) => p.category === active)
-  }, [posts, active])
+  const visible: FeedItem[] = useMemo(() => {
+    const cat: FeedCategory | "all" = active
+    return filterItemsByCategory(items, cat)
+  }, [items, active])
 
   return (
     <div
       className="min-h-dvh w-full font-sans"
       style={{
-        // Scoped palette for the feed route — intentionally very different
-        // from the rose/blush palette used elsewhere in the app.
-        // Warm paper background, deep navy ink, ochre accent.
-        ["--feed-bg" as string]: "oklch(0.965 0.014 85)",
+        /* ── АртЛента palette ────────────────────────────────────────────
+           Deliberately monotone: a cool near-white paper, dark indigo ink
+           with just enough chroma to avoid looking grey, and a single
+           warm amber accent for reactions, highlights, and the "+" in
+           АРТЛЕНТА+. No hard hairlines — the feed relies on soft shadows
+           and a shade of paper (`--feed-muted`) to separate surfaces,
+           with a thicker 2px border reserved for focus/picker states.
+        */
+        ["--feed-bg" as string]: "oklch(0.972 0.004 250)",
         ["--feed-surface" as string]: "#ffffff",
-        ["--feed-ink" as string]: "oklch(0.22 0.03 250)",
-        ["--feed-ink-soft" as string]: "oklch(0.44 0.025 250)",
-        ["--feed-ink-faint" as string]: "oklch(0.6 0.02 250)",
-        ["--feed-line" as string]: "oklch(0.9 0.015 85)",
-        ["--feed-primary" as string]: "oklch(0.34 0.075 240)",
-        ["--feed-primary-soft" as string]: "oklch(0.94 0.025 240)",
-        ["--feed-accent" as string]: "oklch(0.68 0.14 70)",
-        ["--feed-accent-soft" as string]: "oklch(0.94 0.04 75)",
-        ["--feed-muted" as string]: "oklch(0.95 0.01 85)",
+        ["--feed-muted" as string]: "oklch(0.955 0.004 250)",
+        ["--feed-muted-strong" as string]: "oklch(0.935 0.006 250)",
+        ["--feed-ink" as string]: "oklch(0.22 0.02 255)",
+        ["--feed-ink-soft" as string]: "oklch(0.48 0.015 255)",
+        ["--feed-ink-faint" as string]: "oklch(0.62 0.012 255)",
+        /* Used sparingly — only for the optional thicker outline on
+           focused pills / picker popover. */
+        ["--feed-line" as string]: "oklch(0.9 0.006 250)",
+        ["--feed-line-strong" as string]: "oklch(0.82 0.008 250)",
+        /* Single accent — warm amber. */
+        ["--feed-accent" as string]: "oklch(0.68 0.15 55)",
+        ["--feed-accent-soft" as string]: "oklch(0.955 0.04 70)",
+        ["--feed-primary-soft" as string]: "oklch(0.945 0.012 250)",
+        ["--feed-primary" as string]: "oklch(0.32 0.035 255)",
         backgroundColor: "var(--feed-bg)",
         color: "var(--feed-ink)",
       }}
@@ -54,29 +73,60 @@ export default function FeedPage() {
         onSelect={(id) => setActive(id)}
       />
 
-      <main className="mx-auto w-full max-w-[620px] pb-24 sm:px-5 sm:pt-5">
-        <FeedComposer />
+      {/*
+        3-column layout:
+          <sm (<640)   : center only (edge-to-edge cards)
+          sm..md        : center with padding + rounded cards
+          md..lg        : center + right column (narrow)
+          lg..xl        : center + right (wider) + left (compact)
+          xl+           : left + center + right with full widgets
+      */}
+      <div
+        className="mx-auto flex w-full max-w-[1300px] gap-0 pb-24 sm:gap-5 sm:px-4 md:gap-6 lg:px-6 xl:gap-8"
+      >
+        {/* Left rail — only from lg up. */}
+        <aside className="sticky top-[104px] hidden h-[calc(100dvh-120px)] w-[230px] shrink-0 self-start overflow-y-auto pr-1 lg:block xl:w-[250px] scrollbar-thin">
+          <FeedSideLeft />
+        </aside>
 
-        <div className="flex flex-col gap-0 sm:gap-5">
-          {visible.map((post) => (
-            <FeedPost key={post.id} post={post} />
-          ))}
-        </div>
+        {/* Center column — the feed itself. */}
+        <main className="mx-auto flex w-full min-w-0 max-w-[620px] flex-col gap-0 pt-0 sm:gap-5 sm:pt-5 md:max-w-[560px] lg:max-w-[600px] xl:max-w-[620px]">
+          <FeedComposer />
 
-        {visible.length === 0 && (
-          <div
-            className="mx-4 mt-8 rounded-2xl border p-10 text-center sm:mx-0"
-            style={{
-              borderColor: "var(--feed-line)",
-              backgroundColor: "var(--feed-surface)",
-            }}
-          >
-            <p className="text-sm" style={{ color: "var(--feed-ink-soft)" }}>
-              В этой категории пока тихо. Загляните позже — город не спит.
-            </p>
+          <div className="flex flex-col gap-0 sm:gap-5">
+            {visible.map((item) => {
+              if (item.kind === "post") {
+                return <FeedPost key={item.data.id} post={item.data} />
+              }
+              if (item.kind === "promo-amur") {
+                return <FeedPromoAmur key={item.id} />
+              }
+              return <FeedPromoArtlenta key={item.id} />
+            })}
           </div>
-        )}
-      </main>
+
+          {visible.length === 0 && (
+            <div
+              className="mx-4 mt-8 rounded-3xl p-10 text-center sm:mx-0"
+              style={{
+                backgroundColor: "var(--feed-surface)",
+              }}
+            >
+              <p
+                className="text-sm leading-relaxed"
+                style={{ color: "var(--feed-ink-soft)" }}
+              >
+                В этой категории пока тихо. Загляните позже — город не спит.
+              </p>
+            </div>
+          )}
+        </main>
+
+        {/* Right rail — shown from md up. */}
+        <aside className="sticky top-[104px] hidden h-[calc(100dvh-120px)] w-[260px] shrink-0 self-start overflow-y-auto pl-1 md:block lg:w-[280px] xl:w-[320px] scrollbar-thin">
+          <FeedSideRight />
+        </aside>
+      </div>
     </div>
   )
 }

@@ -92,6 +92,12 @@
 }
 
 @theme inline {
+  /* Extra-small breakpoint — squeezes in between mobile (default) and
+     Tailwind's built-in `sm` (640px). Targets the 480–640 range where
+     small phones need a halfway step between the single-column stacked
+     mobile layout and the first real tablet/desktop tier. */
+  --breakpoint-xs: 30rem;
+
   --font-sans: var(--font-inter), "Inter Fallback", system-ui, sans-serif;
   --font-serif: var(--font-instrument-serif), "Georgia", serif;
   --font-mono: "Geist Mono", "Geist Mono Fallback";

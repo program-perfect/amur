@@ -7,6 +7,13 @@
  * plausible city-life posts. Generation is deterministic — index-driven,
  * never Math.random — so server and client render identical output and
  * there are no hydration mismatches.
+ *
+ * In addition, the generator occasionally (≈1 out of every ~10–14 items)
+ * injects a sponsored item. Two kinds exist:
+ *  - `promo-amur`: a cross-promotion card for the Amur dating app, the
+ *    parent product this feed lives inside.
+ *  - `promo-artlenta`: a self-promotion card inviting readers to try
+ *    the paid АРТЛЕНТА+ tier.
  */
 
 export type FeedCategory = "infra" | "culture" | "evening" | "books"
@@ -48,6 +55,16 @@ export type FeedPostData = {
   shares: number
   views: number
 }
+
+/**
+ * An entry in the streamed feed list. A "post" is a regular generated
+ * entry; "promo-*" variants render as dedicated ad cards with their own
+ * colour treatment and call-to-action.
+ */
+export type FeedItem =
+  | { kind: "post"; data: FeedPostData }
+  | { kind: "promo-amur"; id: string }
+  | { kind: "promo-artlenta"; id: string }
 
 type Template = {
   group: string
@@ -202,22 +219,13 @@ function makeReactions(
   weights[top] += 0.15
 
   const out: FeedReactionCounts = {}
-  let assigned = 0
   const keys: FeedReactionKey[] = ["like", "fire", "wow", "haha", "sad", "angry"]
-  keys.forEach((k, i) => {
-    const share = weights[k] / (keys.length * 0.33)
-    const n = Math.max(0, Math.round(total * weights[k]) - (i === keys.length - 1 ? 0 : 0))
-    if (n > 0) {
-      out[k] = n
-      assigned += n
-    }
-    // Silence the unused var warning from the `share` calculation kept
-    // for readability above.
-    void share
+  keys.forEach((k) => {
+    const n = Math.max(0, Math.round(total * weights[k]))
+    if (n > 0) out[k] = n
   })
   // Ensure the top reaction is present even if weighting rounded it out.
   if (!out[top]) out[top] = Math.max(1, Math.round(total * 0.1))
-  void assigned
   return out
 }
 
@@ -225,44 +233,82 @@ function makeTime(index: number): string {
   return timeLabels[index % timeLabels.length]
 }
 
-/**
- * Produce `count` posts by cycling the templates and varying metadata.
- * Deterministic in `count` — no randomness, safe for SSR hydration.
- */
-export function generateFeed(count: number): FeedPostData[] {
-  const posts: FeedPostData[] = []
-  for (let i = 0; i < count; i++) {
-    const t = templates[i % templates.length]
-    const top = pickTopReaction(t.category, i)
-    // Drop the image every 3rd cycle for the templates that have one —
-    // keeps the feed varied, like a real news stream.
-    const hideImage = t.image && i >= templates.length && i % 3 === 2
-    const buzz = Math.max(
-      0.15,
-      Math.min(1, t.buzz + (((i * 13) % 7) - 3) / 40),
-    )
-    const reactions = makeReactions(buzz, i + 1, top)
+function makePost(i: number): FeedPostData {
+  const t = templates[i % templates.length]
+  const top = pickTopReaction(t.category, i)
+  // Drop the image every 3rd cycle for the templates that have one —
+  // keeps the feed varied, like a real news stream.
+  const hideImage = t.image && i >= templates.length && i % 3 === 2
+  const buzz = Math.max(
+    0.15,
+    Math.min(1, t.buzz + (((i * 13) % 7) - 3) / 40),
+  )
+  const reactions = makeReactions(buzz, i + 1, top)
 
-    posts.push({
-      id: `post-${i}`,
-      group: t.group,
-      handle: t.handle,
-      monogram: t.monogram,
-      avatarHue: t.avatarHue,
-      category: t.category,
-      time: makeTime(i),
-      location: t.location,
-      text: t.text,
-      image: hideImage ? undefined : t.image,
-      reactions,
-      topReaction: top,
-      comments: Math.max(
-        0,
-        Math.round(buzz * 38) + (((i * 7) % 9) - 4),
-      ),
-      shares: Math.max(0, Math.round(buzz * 14) + ((i * 3) % 5) - 2),
-      views: Math.round(400 + buzz * 4800 + ((i * 97) % 600)),
-    })
+  return {
+    id: `post-${i}`,
+    group: t.group,
+    handle: t.handle,
+    monogram: t.monogram,
+    avatarHue: t.avatarHue,
+    category: t.category,
+    time: makeTime(i),
+    location: t.location,
+    text: t.text,
+    image: hideImage ? undefined : t.image,
+    reactions,
+    topReaction: top,
+    comments: Math.max(0, Math.round(buzz * 38) + (((i * 7) % 9) - 4)),
+    shares: Math.max(0, Math.round(buzz * 14) + ((i * 3) % 5) - 2),
+    views: Math.round(400 + buzz * 4800 + ((i * 97) % 600)),
   }
-  return posts
+}
+
+/**
+ * Produce `count` mixed feed items: posts interleaved with occasional
+ * sponsored cards. Deterministic — no randomness, safe for SSR
+ * hydration.
+ *
+ * Promo cadence (chosen to feel rare but present):
+ *  - An АртЛента+ promo lands roughly every 10th slot (offset +5)
+ *  - An Amur promo lands roughly every 14th slot (offset +9)
+ * Two promos never collide in adjacent slots — we always keep at least
+ * one regular post between them.
+ */
+export function generateFeedItems(count: number): FeedItem[] {
+  const out: FeedItem[] = []
+  let postIdx = 0
+  let lastKind: "post" | "promo" = "post"
+
+  for (let slot = 0; slot < count; slot++) {
+    // Decide whether this slot is a promo.
+    const isArtlentaPromo = slot > 0 && slot % 10 === 5
+    const isAmurPromo = slot > 0 && slot % 14 === 9 && !isArtlentaPromo
+
+    if ((isArtlentaPromo || isAmurPromo) && lastKind !== "promo") {
+      if (isArtlentaPromo) {
+        out.push({ kind: "promo-artlenta", id: `promo-al-${slot}` })
+      } else {
+        out.push({ kind: "promo-amur", id: `promo-amur-${slot}` })
+      }
+      lastKind = "promo"
+      continue
+    }
+
+    out.push({ kind: "post", data: makePost(postIdx) })
+    postIdx++
+    lastKind = "post"
+  }
+
+  return out
+}
+
+/** Convenience filter — derive only the posts (for category-filtered
+ *  views where promos should still sprinkle in naturally). */
+export function filterItemsByCategory(
+  items: FeedItem[],
+  category: FeedCategory | "all",
+): FeedItem[] {
+  if (category === "all") return items
+  return items.filter((it) => it.kind !== "post" || it.data.category === category)
 }
