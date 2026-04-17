@@ -51,6 +51,36 @@ export type ScriptStep =
 export type Fact = { icon: LucideIcon; label: string };
 export type Interest = { label: string; icon: LucideIcon };
 
+/**
+ * Per-character message-composition timing. Simulates how long a given
+ * persona takes to type / send their next line. Delays scale with text
+ * length but are clamped by `minDelay` / `maxDelay`.
+ */
+export type TypingProfile = {
+  /** Delay before the "печатает…" indicator appears, in ms. */
+  startDelay: number;
+  /** Milliseconds per character of the outgoing text. */
+  msPerChar: number;
+  /** Lower bound for the composition delay, in ms. */
+  minDelay: number;
+  /** Upper bound for the composition delay, in ms. */
+  maxDelay: number;
+  /** Fixed delay for image messages, in ms. */
+  imageDelay: number;
+};
+
+/**
+ * Safe fallback used for conversations that don't declare a typing profile.
+ * Matches the previous hard-coded behaviour (550 / 1400 / 1800 ms).
+ */
+export const defaultTypingProfile: TypingProfile = {
+  startDelay: 550,
+  msPerChar: 35,
+  minDelay: 1000,
+  maxDelay: 3500,
+  imageDelay: 1800,
+};
+
 export type Conversation = {
   id: string;
   name: string;
@@ -84,6 +114,9 @@ export type Conversation = {
     read?: boolean;
   };
   suggestion: string;
+  /** Per-character message-composition timing. If omitted, the app falls
+   *  back to `defaultTypingProfile`. */
+  typingProfile?: TypingProfile;
   /** Full scripted dialog. Every scenario starts with `from: "them"`. */
   script: ScriptStep[];
 };
@@ -123,6 +156,14 @@ export const conversations: Conversation[] = [
       unread: 1,
     },
     suggestion: "Хорошо, собираюсь.",
+    // Маэстро пишет размеренно и с паузами — как будто подбирает слова.
+    typingProfile: {
+      startDelay: 900,
+      msPerChar: 50,
+      minDelay: 1800,
+      maxDelay: 5200,
+      imageDelay: 2600,
+    },
     script: [
       {
         kind: "text",
@@ -176,6 +217,14 @@ export const conversations: Conversation[] = [
       time: "—",
     },
     suggestion: "Нужен фрагмент сценария с его сообщениями",
+    // Алексей — спокойный собеседник среднего темпа.
+    typingProfile: {
+      startDelay: 650,
+      msPerChar: 38,
+      minDelay: 1200,
+      maxDelay: 3600,
+      imageDelay: 2000,
+    },
     script: [
       // TODO:
       // В приложенном фрагменте сценария нет пригодимой чат-переписки Рыжова,
@@ -216,6 +265,14 @@ export const conversations: Conversation[] = [
       time: "—",
     },
     suggestion: "Привет!) Как дела?",
+    // Игорь — пишет быстро, порывисто, почти не задумываясь.
+    typingProfile: {
+      startDelay: 280,
+      msPerChar: 22,
+      minDelay: 650,
+      maxDelay: 2400,
+      imageDelay: 1400,
+    },
     script: [
       // TODO:
       // В приложенном фрагменте сценария нет пригодимой чат-переписки Лёлика
@@ -249,6 +306,14 @@ export const conversations: Conversation[] = [
       time: "—",
     },
     suggestion: "Привет!) Как дела?",
+    // Влад — пишет неспешно, часто отвлекается.
+    typingProfile: {
+      startDelay: 1100,
+      msPerChar: 55,
+      minDelay: 2000,
+      maxDelay: 5800,
+      imageDelay: 2400,
+    },
     script: [
       // TODO:
       // В приложенном фрагменте сценария нет пригодимой чат-переписки Лёлика
@@ -284,6 +349,14 @@ export const conversations: Conversation[] = [
       unread: 1,
     },
     suggestion: "Я РАБОТАЮ В БИБЛИОТЕКЕ. СЕГОДНЯ У НАС ТЕАТРАЛИЗОВАННАЯ ПОСТАНОВКА. МОЖЕТ БЫТЬ ХОЧЕШЬ ПРИЙТИ?",
+    // Макс пишет каждое слово капсом — чуть медленнее среднего, настойчиво.
+    typingProfile: {
+      startDelay: 500,
+      msPerChar: 32,
+      minDelay: 1100,
+      maxDelay: 3400,
+      imageDelay: 1900,
+    },
     script: [
       {
         kind: "text",

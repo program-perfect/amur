@@ -12,9 +12,11 @@ import { ProfilePanel } from "@/components/amur/profile-panel"
 import { ProfileSheet } from "@/components/amur/profile-sheet"
 import {
   conversations as seed,
+  defaultTypingProfile,
   type Conversation,
   type Message,
   type ScriptStep,
+  type TypingProfile,
 } from "@/lib/amur-data"
 import { getConversationId, getChatId } from "@/lib/chat-ids"
 import { cn } from "@/lib/utils"
@@ -382,6 +384,7 @@ function MessengerPage() {
       const step = conv.script[s.scriptIndex]
       if (!step || step.from !== "them") continue
 
+      const profile: TypingProfile = conv.typingProfile ?? defaultTypingProfile
       if (!s.isTyping) {
         // Phase 1 — show typing indicator after a short beat.
         timers.push(
@@ -396,11 +399,18 @@ function MessengerPage() {
                 [conv.id]: { ...cur, isTyping: true },
               }
             })
-          }, 550),
+          }, profile.startDelay),
         )
       } else {
-        // Phase 2 — reveal the scripted message.
-        const delay = step.kind === "image" ? 1800 : 1400
+        // Phase 2 — reveal the scripted message. Text delays scale with
+        // message length but are clamped by the per-character profile.
+        const delay =
+          step.kind === "image"
+            ? profile.imageDelay
+            : Math.min(
+                profile.maxDelay,
+                Math.max(profile.minDelay, step.text.length * profile.msPerChar),
+              )
         timers.push(
           window.setTimeout(() => {
             setState((prev) => {
