@@ -1,0 +1,241 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Editorial palette — soft rose & blush dominant, peach as accent only */
+  --background: oklch(0.975 0.018 12);
+  --foreground: oklch(0.24 0.055 15);
+
+  --card: oklch(0.99 0.012 10);
+  --card-foreground: oklch(0.24 0.055 15);
+
+  --popover: oklch(0.99 0.012 10);
+  --popover-foreground: oklch(0.24 0.055 15);
+
+  /* Raspberry rose — primary pink */
+  --primary: oklch(0.56 0.2 8);
+  --primary-foreground: oklch(0.985 0.012 10);
+
+  /* Soft blush pink surface */
+  --secondary: oklch(0.93 0.04 10);
+  --secondary-foreground: oklch(0.24 0.055 15);
+
+  /* Muted rose — slightly cooler */
+  --muted: oklch(0.94 0.03 8);
+  --muted-foreground: oklch(0.48 0.07 12);
+
+  /* Peach accent — warm pop against rose surfaces */
+  --accent: oklch(0.8 0.14 50);
+  --accent-foreground: oklch(0.24 0.055 15);
+
+  --destructive: oklch(0.58 0.22 18);
+  --destructive-foreground: oklch(0.985 0.012 10);
+
+  --border: oklch(0.88 0.035 10);
+  --input: oklch(0.88 0.035 10);
+  --ring: oklch(0.56 0.2 8);
+
+  --chart-1: oklch(0.56 0.2 8);
+  --chart-2: oklch(0.8 0.14 50);
+  --chart-3: oklch(0.72 0.16 18);
+  --chart-4: oklch(0.88 0.055 12);
+  --chart-5: oklch(0.64 0.19 5);
+
+  --radius: 0.875rem;
+
+  /* Outer frame — soft blush rose (LeftNav + gaps) */
+  --sidebar: oklch(0.93 0.045 10);
+  --sidebar-foreground: oklch(0.24 0.055 15);
+  --sidebar-primary: oklch(0.56 0.2 8);
+  --sidebar-primary-foreground: oklch(0.985 0.012 10);
+  --sidebar-accent: oklch(0.89 0.055 14);
+  --sidebar-accent-foreground: oklch(0.24 0.055 15);
+  --sidebar-border: oklch(0.85 0.045 10);
+  --sidebar-ring: oklch(0.56 0.2 8);
+}
+
+.dark {
+  --background: oklch(0.19 0.025 10);
+  --foreground: oklch(0.95 0.012 15);
+  --card: oklch(0.23 0.03 10);
+  --card-foreground: oklch(0.95 0.012 15);
+  --popover: oklch(0.23 0.03 10);
+  --popover-foreground: oklch(0.95 0.012 15);
+  --primary: oklch(0.78 0.12 10);
+  --primary-foreground: oklch(0.2 0.03 10);
+  --secondary: oklch(0.29 0.035 10);
+  --secondary-foreground: oklch(0.95 0.012 15);
+  --muted: oklch(0.29 0.035 10);
+  --muted-foreground: oklch(0.72 0.025 15);
+  --accent: oklch(0.74 0.12 50);
+  --accent-foreground: oklch(0.2 0.03 10);
+  --destructive: oklch(0.58 0.2 20);
+  --destructive-foreground: oklch(0.98 0.01 15);
+  --border: oklch(0.31 0.035 10);
+  --input: oklch(0.31 0.035 10);
+  --ring: oklch(0.78 0.12 10);
+  --chart-1: oklch(0.78 0.12 10);
+  --chart-2: oklch(0.74 0.12 50);
+  --chart-3: oklch(0.58 0.1 15);
+  --chart-4: oklch(0.82 0.07 20);
+  --chart-5: oklch(0.48 0.08 8);
+  --sidebar: oklch(0.23 0.03 10);
+  --sidebar-foreground: oklch(0.95 0.012 15);
+  --sidebar-primary: oklch(0.78 0.12 10);
+  --sidebar-primary-foreground: oklch(0.2 0.03 10);
+  --sidebar-accent: oklch(0.29 0.035 10);
+  --sidebar-accent-foreground: oklch(0.95 0.012 15);
+  --sidebar-border: oklch(0.31 0.035 10);
+  --sidebar-ring: oklch(0.78 0.12 10);
+}
+
+@theme inline {
+  --font-sans: var(--font-inter), "Inter Fallback", system-ui, sans-serif;
+  --font-serif: var(--font-instrument-serif), "Georgia", serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback";
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "ss01", "cv11";
+    /* Disable text/element selection globally. Specific elements (message
+       bubbles, profile details, inputs) opt back in via `select-text`. */
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Always allow selection inside form fields. */
+  input,
+  textarea {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+  /* Images decorative by default — prevent drag-select of random images. */
+  img {
+    -webkit-user-drag: none;
+  }
+}
+
+/* Smooth scroll for the whole document and nested scroll containers. */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Small entrance animation for message bubbles. */
+@keyframes amur-msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes amur-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+/* Centered popup — used by the mobile/tablet profile sheet. */
+@keyframes amur-pop-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+@keyframes amur-pop-out {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.94);
+  }
+}
+@layer utilities {
+  .animate-message-in {
+    animation: amur-msg-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .animate-soft-in {
+    animation: amur-fade-in 240ms ease-out both;
+  }
+  .animate-pop-in {
+    animation: amur-pop-in 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .animate-pop-out {
+    animation: amur-pop-out 200ms cubic-bezier(0.4, 0, 1, 1) both;
+  }
+}
+
+/* Subtle scrollbar — smooth scrolling applies to all such containers
+   (message list, conversations list, profile panel). */
+@layer utilities {
+  .scrollbar-thin {
+    scroll-behavior: smooth;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 999px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: var(--muted-foreground);
+  }
+}
